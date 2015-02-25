@@ -1,0 +1,20 @@
+plugins {
+  id 'java'
+  id 'eclipse'
+}
+
+sourceCompatibility = 1.7
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testCompile 'junit:junit:4.11'
+	testCompile 'org.easytesting:fest-assert:1.4'
+	compile 'info.cukes:cucumber-core:1.2.2'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
