@@ -21,6 +21,7 @@ public class FakeRerunFormatter implements Formatter, Reporter {
 	private int uriCount;
 	private int doneCount;
 	private int closeCount;
+	private int scenarioCount;
 	private Result result;
 
 	@Override
@@ -82,6 +83,7 @@ public class FakeRerunFormatter implements Formatter, Reporter {
 
 	@Override
 	public void scenario(Scenario scenario) {
+		scenarioCount++;
 	}
 
 	@Override
@@ -133,5 +135,9 @@ public class FakeRerunFormatter implements Formatter, Reporter {
 
 	public int getCloseInvocationCount() {
 		return closeCount;
+	}
+	
+	public int getScenarioInvocationCount() {
+		return scenarioCount;
 	}
 }
