@@ -33,6 +33,7 @@ public class RerunFileBuilderTest {
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(1);
 		assertThat(fakeRerunFormatter.getEndOfLifeCycleInvocationCount()).isEqualTo(1);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(1);
+		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(1);
 		assertThat(fakeRerunFormatter.getResult().getStatus()).isEqualTo(Result.FAILED);
 	}
 	
@@ -47,6 +48,7 @@ public class RerunFileBuilderTest {
 		assertThat(fakeRerunFormatter.getUri()).isEqualTo(featurePath);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(3);
 		assertThat(fakeRerunFormatter.getEndOfLifeCycleInvocationCount()).isEqualTo(3);
+		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(3);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(1);
 	}
 	
@@ -59,6 +61,7 @@ public class RerunFileBuilderTest {
 			rerunFileBuilder.addFeature(cucumberFeature);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(5);
 		assertThat(fakeRerunFormatter.getEndOfLifeCycleInvocationCount()).isEqualTo(5);
+		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(5);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(2);
 	}
 	
@@ -73,6 +76,7 @@ public class RerunFileBuilderTest {
 		assertThat(fakeRerunFormatter.getUri()).isEqualTo(featurePath);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(2);
 		assertThat(fakeRerunFormatter.getEndOfLifeCycleInvocationCount()).isEqualTo(2);
+		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(2);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(1);
 	}
 	

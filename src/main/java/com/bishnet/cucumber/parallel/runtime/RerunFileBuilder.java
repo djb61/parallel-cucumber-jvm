@@ -46,6 +46,7 @@ public class RerunFileBuilder {
 	private void addScenario(CucumberScenario cucumberScenario) {
 		Scenario scenario = (Scenario) cucumberScenario.getGherkinModel();
 		formatter.startOfScenarioLifeCycle(scenario);
+		formatter.scenario(scenario);
 		reporter.result(new Result(Result.FAILED, 0L, ""));
 		formatter.endOfScenarioLifeCycle(scenario);
 	}
