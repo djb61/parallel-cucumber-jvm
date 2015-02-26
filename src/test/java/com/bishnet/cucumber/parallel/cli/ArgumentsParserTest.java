@@ -35,7 +35,7 @@ public class ArgumentsParserTest {
 		reportArgsList.add("--plugin");
 		reportArgsList.add("json:" + reportPath);
 		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getReportPath()).isEqualTo(reportPath);
+		assertThat(options.getJsonReportPath()).isEqualTo(reportPath);
 	}
 
 	@Test
@@ -45,15 +45,37 @@ public class ArgumentsParserTest {
 		reportArgsList.add("-p");
 		reportArgsList.add("json:" + reportPath);
 		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getReportPath()).isEqualTo(reportPath);
+		assertThat(options.getJsonReportPath()).isEqualTo(reportPath);
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void pluginArgumentWhichIsNotJsonShouldThrowAnException() {
+	@Test
+	public void finalReportPathIsParsedFromHtmlPluginArgument() {
+		String reportPath = "report/myreport";
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("--plugin");
+		reportArgsList.add("html:" + reportPath);
+		ArgumentsParser options = new ArgumentsParser(reportArgsList);
+		assertThat(options.getHtmlReportPath()).isEqualTo(reportPath);
+	}
+
+	@Test
+	public void finalReportPathIsParsedFromHtmlPluginArgumentUsingShortForm() {
+		String reportPath = "report/myreport";
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("-p");
+		reportArgsList.add("html:" + reportPath);
+		ArgumentsParser options = new ArgumentsParser(reportArgsList);
+		assertThat(options.getHtmlReportPath()).isEqualTo(reportPath);
+	}
+	
+	@Test
+	public void pluginArgumentWhichIsNotJsonOrHtmlShouldBePassedThroughToResultingCucumberArgsList() {
 		List<String> pluginArgsList = new ArrayList<String>();
 		pluginArgsList.add("--plugin");
 		pluginArgsList.add("other");
-		new ArgumentsParser(pluginArgsList);
+		int expectedArgCount = pluginArgsList.size();
+		ArgumentsParser options = new ArgumentsParser(pluginArgsList);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test

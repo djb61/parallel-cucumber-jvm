@@ -9,7 +9,8 @@ public class ArgumentsParser {
 	
 	private List<String> cucumberArgs = new ArrayList<String>();
 	
-	private String reportPath;
+	private String htmlReportPath;
+	private String jsonReportPath;
 
 	public ArgumentsParser(List<String> args) {
 		parse(args);
@@ -23,8 +24,12 @@ public class ArgumentsParser {
 		return numThreads;
 	}
 	
-	public String getReportPath() {
-		return reportPath;
+	public String getJsonReportPath() {
+		return jsonReportPath;
+	}
+	
+	public String getHtmlReportPath() {
+		return htmlReportPath;
 	}
 	
 	private void parse(List<String> args) {
@@ -34,10 +39,16 @@ public class ArgumentsParser {
 			if (arg.equals("--num-threads")) {
 				numThreads = Integer.parseInt(args.remove(0));
 			} else if (arg.equals("--plugin") || arg.equals("-p")) {
-				String[] pluginArgs = args.remove(0).split(":");
-				if (!pluginArgs[0].equals("json"))
-					throw new IllegalArgumentException("The only supported plugin is 'json'");
-				reportPath = pluginArgs[1];
+				String pluginArgs = args.remove(0);
+				String[] pluginArgsArray = pluginArgs.split(":");
+				if (pluginArgsArray[0].equals("json"))
+					jsonReportPath = pluginArgsArray[1];
+				else if (pluginArgsArray[0].equals("html"))
+					htmlReportPath = pluginArgsArray[1];
+				else {
+					cucumberArgs.add(arg);
+					cucumberArgs.add(pluginArgs);
+				}
 			} else {
 				cucumberArgs.add(arg);
 			}
