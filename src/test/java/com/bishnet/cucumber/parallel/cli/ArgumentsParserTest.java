@@ -83,9 +83,8 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--num-threads");
 		arguments.add("10");
-		arguments.add("some");
+		arguments.add("--plugin");
 		arguments.add("other");
-		arguments.add("args");
 		int expectedArgCount = arguments.size() - 2;
 		ArgumentsParser options = new ArgumentsParser(arguments);
 		assertThat(options.getCucumberArgs().size()).isEqualTo(expectedArgCount);
@@ -96,11 +95,73 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--plugin");
 		arguments.add("json:report.json");
-		arguments.add("some");
-		arguments.add("other");
-		arguments.add("args");
+		arguments.add("--tags");
+		arguments.add("@other");
 		int expectedArgCount = arguments.size() - 2;
 		ArgumentsParser options = new ArgumentsParser(arguments);
 		assertThat(options.getCucumberArgs().size()).isEqualTo(expectedArgCount);
+	}
+	
+	@Test
+	public void featurePathArgumentsShouldBeRemovedFromCucumberArgsAndAddedToFeaturePaths() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("classpath:featurepath");
+		arguments.add("/absolute/feature/path");
+		arguments.add("--tags");
+		arguments.add("@other");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(2);
+		assertThat(options.getFeaturePaths().size()).isEqualTo(2);
+	}
+	
+	@Test
+	public void glueArgumentShouldBePassedThroughToCucumberArgsList(){
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--glue");
+		arguments.add("com.bishnet.glue");
+		arguments.add("-g");
+		arguments.add("com.bishnet.moreglue");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(4);
+	}
+	
+	@Test
+	public void nameArgumentShouldBePassedThroughToCucumberArgsList(){
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--name");
+		arguments.add("testname");
+		arguments.add("-n");
+		arguments.add("anothername");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(4);
+	}
+	
+	@Test
+	public void snippetsArgumentShouldBePassedThroughToCucumberArgsList(){
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--snippets");
+		arguments.add("asnippet");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(2);
+	}
+	
+	@Test
+	public void internationalisationArgumentShouldBePassedThroughToCucumberArgsList(){
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--i18n");
+		arguments.add("value");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(2);
+	}
+	
+	@Test
+	public void formatArgumentShouldBeRemovedFromResultingCucumberArgsList() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--format");
+		arguments.add("json:report.json");
+		arguments.add("-f");
+		arguments.add("html:reportHtml");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.getCucumberArgs().size()).isEqualTo(0);
 	}
 }
