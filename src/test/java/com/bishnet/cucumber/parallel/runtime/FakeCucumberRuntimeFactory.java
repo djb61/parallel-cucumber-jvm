@@ -12,16 +12,14 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 
 public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 
-	private byte exitCode;
-	private boolean shouldThrowException;
+	private byte[] perInvocationExitCodes;
+	private boolean[] perInvocationShouldThrowException;
+	private int invocationCount;
 	
-	public FakeCucumberRuntimeFactory(byte exitCode) {
+	public FakeCucumberRuntimeFactory(byte[] perInvocationExitCodes, boolean[] perInvocationShouldThrowException) {
 		super(new ArrayList<String>(), new ArrayList<String>());
-		this.exitCode = exitCode;
-	}
-	
-	public void throwAnExceptionOnRuntimeRun() {
-		this.shouldThrowException = true;
+		this.perInvocationExitCodes = perInvocationExitCodes;
+		this.perInvocationShouldThrowException = perInvocationShouldThrowException;
 	}
 	
 	@Override
@@ -30,6 +28,8 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ResourceLoader resourceLoader = new MultiLoader(classLoader);
 		ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+		byte exitCode = perInvocationExitCodes[invocationCount % perInvocationExitCodes.length];
+		boolean shouldThrowException = perInvocationShouldThrowException[invocationCount % perInvocationExitCodes.length];
         return new FakeCucumberRuntime(exitCode, shouldThrowException, resourceLoader, classFinder, classLoader, runtimeOptions);
 	}
 }

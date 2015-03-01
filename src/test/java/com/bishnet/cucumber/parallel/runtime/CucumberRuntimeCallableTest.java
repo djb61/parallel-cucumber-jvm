@@ -13,7 +13,7 @@ public class CucumberRuntimeCallableTest {
 	@Test
 	public void shouldReturnCorrectExitCodeForZeroCodeOnCompletion() throws Exception {
 		byte exitCode = 0;
-		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCode);
+		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(new byte[] { exitCode }, new boolean[] { false });
 		CucumberRuntimeCallable callable = new CucumberRuntimeCallable(new ArrayList<String>(), runtimeFactory);
 		assertThat(callable.call()).isEqualTo(exitCode);
 	}
@@ -21,7 +21,7 @@ public class CucumberRuntimeCallableTest {
 	@Test
 	public void shouldReturnCorrectExitCodeForNonZeroCodeOnCompletion() throws Exception {
 		byte exitCode = 1;
-		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCode);
+		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(new byte[] { exitCode }, new boolean[] { false });
 		CucumberRuntimeCallable callable = new CucumberRuntimeCallable(new ArrayList<String>(), runtimeFactory);
 		assertThat(callable.call()).isEqualTo(exitCode);
 	}
@@ -29,8 +29,7 @@ public class CucumberRuntimeCallableTest {
 	@Test(expected=CucumberException.class)
 	public void shouldThrowCucumberExceptionOnFailure() throws Exception {
 		byte exitCode = 0;
-		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCode);
-		runtimeFactory.throwAnExceptionOnRuntimeRun();
+		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(new byte[] { exitCode }, new boolean[] { true });
 		CucumberRuntimeCallable callable = new CucumberRuntimeCallable(new ArrayList<String>(), runtimeFactory);
 		callable.call();
 	}
