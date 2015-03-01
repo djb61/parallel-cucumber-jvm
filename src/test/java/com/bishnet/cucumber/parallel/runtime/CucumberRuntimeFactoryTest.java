@@ -14,7 +14,8 @@ public class CucumberRuntimeFactoryTest {
 		List<String> featurePaths = new ArrayList<String>();
 		featurePaths.add("/some/absolute/path");
 		featurePaths.add("a/relative/path");
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(featurePaths);
+		List<String> baseCucumberArgs = new ArrayList<String>();
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(featurePaths, baseCucumberArgs);
 		runtimeFactory.getRuntime(cucumberArguments);
 	}
 	
@@ -24,7 +25,8 @@ public class CucumberRuntimeFactoryTest {
 		featurePaths.add("/some/absolute/path");
 		featurePaths.add("a/relative/path");
 		featurePaths.add("classpath:");
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(featurePaths);
+		List<String> baseCucumberArgs = new ArrayList<String>();
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(featurePaths, baseCucumberArgs);
 		runtimeFactory.getRuntime(cucumberArguments);
 	}
 }

@@ -19,13 +19,17 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 public class CucumberRuntimeFactory {
 
 	private List<String> featurePaths;
+	private List<String> baseCucumberArguments;
 	
-	public CucumberRuntimeFactory(List<String> featurePaths) {
+	public CucumberRuntimeFactory(List<String> featurePaths, List<String> baseCucumberArguments) {
 		this.featurePaths = featurePaths;
+		this.baseCucumberArguments = baseCucumberArguments;
 	}
 	
-	public Runtime getRuntime(List<String> cucumberArguments) {
-		RuntimeOptions runtimeOptions = new RuntimeOptions(cucumberArguments);
+	public Runtime getRuntime(List<String> additionalCucumberArguments) {
+		List<String> runtimeCucumberArguments = new ArrayList<String>(baseCucumberArguments);
+		runtimeCucumberArguments.addAll(additionalCucumberArguments);
+		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeCucumberArguments);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ResourceLoader resourceLoader = getResourceLoader();
 		ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);

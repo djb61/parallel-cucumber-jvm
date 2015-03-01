@@ -16,7 +16,7 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 	private boolean shouldThrowException;
 	
 	public FakeCucumberRuntimeFactory(byte exitCode) {
-		super(new ArrayList<String>());
+		super(new ArrayList<String>(), new ArrayList<String>());
 		this.exitCode = exitCode;
 	}
 	
@@ -25,8 +25,8 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 	}
 	
 	@Override
-	public Runtime getRuntime(List<String> cucumberArgs) {
-		RuntimeOptions runtimeOptions = new RuntimeOptions(cucumberArgs);
+	public Runtime getRuntime(List<String> additionalCucumberArgs) {
+		RuntimeOptions runtimeOptions = new RuntimeOptions(additionalCucumberArgs);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ResourceLoader resourceLoader = new MultiLoader(classLoader);
 		ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
