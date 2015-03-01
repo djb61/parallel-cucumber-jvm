@@ -164,4 +164,38 @@ public class ArgumentsParserTest {
 		ArgumentsParser options = new ArgumentsParser(arguments);
 		assertThat(options.getCucumberArgs().size()).isEqualTo(0);
 	}
+	
+	@Test
+	public void isHtmlReportRequiredShouldBeFalseIfNoHtmlArgumentWasPassed() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--strict");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.isHtmlReportRequired()).isFalse();
+	}
+	
+	@Test
+	public void isJsonReportRequiredShouldBeFalseIfNoJsonArgumentWasPassed() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--strict");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.isJsonReportRequired()).isFalse();
+	}
+	
+	@Test
+	public void isHtmlReportRequiredShouldBeTrueIfHtmlArgumentWasPassed() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--plugin");
+		arguments.add("html:report");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.isHtmlReportRequired()).isTrue();
+	}
+	
+	@Test
+	public void isJsonReportRequiredShouldBeTrueIfJsonArgumentWasPassed() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--plugin");
+		arguments.add("json:report.json");
+		ArgumentsParser options = new ArgumentsParser(arguments);
+		assertThat(options.isJsonReportRequired()).isTrue();
+	}
 }

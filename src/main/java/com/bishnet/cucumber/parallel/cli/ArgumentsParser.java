@@ -37,6 +37,14 @@ public class ArgumentsParser {
 		return htmlReportPath;
 	}
 	
+	public boolean isJsonReportRequired() {
+		return jsonReportPath != null;
+	}
+	
+	public boolean isHtmlReportRequired() {
+		return htmlReportPath != null;
+	}
+	
 	private void parse(List<String> args) {
 		while (!args.isEmpty()) {
 			String arg = args.remove(0).trim();
