@@ -30,6 +30,7 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 		ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 		byte exitCode = perInvocationExitCodes[invocationCount % perInvocationExitCodes.length];
 		boolean shouldThrowException = perInvocationShouldThrowException[invocationCount % perInvocationExitCodes.length];
+		invocationCount++;
         return new FakeCucumberRuntime(exitCode, shouldThrowException, resourceLoader, classFinder, classLoader, runtimeOptions);
 	}
 }
