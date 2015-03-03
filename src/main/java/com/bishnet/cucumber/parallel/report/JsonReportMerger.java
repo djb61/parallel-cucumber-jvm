@@ -6,7 +6,6 @@ import gherkin.deps.com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +23,7 @@ public class JsonReportMerger {
 		this.reportFiles = reportFiles;
 	}
 
-	public void merge(Path mergedReport) throws FileNotFoundException, IOException {
+	public void merge(Path mergedReport) throws IOException {
 		List<Map<String, Object>> features = new ArrayList<Map<String, Object>>();
 		for (Path reportFile : reportFiles) {
 			features.addAll(readSingleReport(reportFile));
@@ -39,7 +38,7 @@ public class JsonReportMerger {
 		}
 	}
 	
-	private List<Map<String,Object>> readSingleReport(Path reportFile) throws FileNotFoundException, IOException {
+	private List<Map<String,Object>> readSingleReport(Path reportFile) throws IOException {
 		try (BufferedReader br = new BufferedReader(new FileReader(reportFile.toFile()))) {
 			Type listType = new TypeToken<List<Map<String, Object>>>() {}.getType();
 			return new Gson().fromJson(br, listType);
