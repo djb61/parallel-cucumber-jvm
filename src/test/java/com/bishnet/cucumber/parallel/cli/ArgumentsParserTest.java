@@ -35,7 +35,7 @@ public class ArgumentsParserTest {
 		reportArgsList.add("--plugin");
 		reportArgsList.add("json:" + reportPath);
 		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getJsonReportPath()).isEqualTo(reportPath);
+		assertThat(options.getJsonReportPath().toString()).isEqualTo(reportPath);
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class ArgumentsParserTest {
 		reportArgsList.add("-p");
 		reportArgsList.add("json:" + reportPath);
 		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getJsonReportPath()).isEqualTo(reportPath);
+		assertThat(options.getJsonReportPath().toString()).isEqualTo(reportPath);
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class ArgumentsParserTest {
 		reportArgsList.add("--plugin");
 		reportArgsList.add("html:" + reportPath);
 		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getHtmlReportPath()).isEqualTo(reportPath);
+		assertThat(options.getHtmlReportPath().toString()).isEqualTo(reportPath);
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class ArgumentsParserTest {
 		reportArgsList.add("-p");
 		reportArgsList.add("html:" + reportPath);
 		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getHtmlReportPath()).isEqualTo(reportPath);
+		assertThat(options.getHtmlReportPath().toString()).isEqualTo(reportPath);
 	}
 	
 	@Test

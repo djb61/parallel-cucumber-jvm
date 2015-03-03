@@ -1,5 +1,7 @@
 package com.bishnet.cucumber.parallel.cli;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,8 @@ public class ArgumentsParser {
 	private List<String> cucumberArgs = new ArrayList<String>();
 	private List<String> featurePaths = new ArrayList<String>();
 	
-	private String htmlReportPath;
-	private String jsonReportPath;
+	private Path htmlReportPath;
+	private Path jsonReportPath;
 
 	public ArgumentsParser(List<String> args) {
 		parse(args);
@@ -29,11 +31,11 @@ public class ArgumentsParser {
 		return numThreads;
 	}
 	
-	public String getJsonReportPath() {
+	public Path getJsonReportPath() {
 		return jsonReportPath;
 	}
 	
-	public String getHtmlReportPath() {
+	public Path getHtmlReportPath() {
 		return htmlReportPath;
 	}
 	
@@ -83,9 +85,9 @@ public class ArgumentsParser {
 	private void parsePluginArgument(String pluginValue) {
 		String[] pluginArgsArray = pluginValue.split(":");
 		if (pluginArgsArray[0].equals("json"))
-			jsonReportPath = pluginArgsArray[1];
+			jsonReportPath = Paths.get(pluginArgsArray[1]);
 		else if (pluginArgsArray[0].equals("html"))
-			htmlReportPath = pluginArgsArray[1];
+			htmlReportPath = Paths.get(pluginArgsArray[1]);
 		else {
 			cucumberArgs.add("--plugin");
 			cucumberArgs.add(pluginValue);
