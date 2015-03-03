@@ -16,7 +16,7 @@ public class ArgumentsParserTest {
 		List<String> emptyArgList = new ArrayList<String>();
 		ArgumentsParser argumentsParser = new ArgumentsParser(emptyArgList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.numThreads).isEqualTo(Runtime.getRuntime().availableProcessors());
+		assertThat(runtimeConfiguration.numberOfThreads).isEqualTo(Runtime.getRuntime().availableProcessors());
 	}
 	
 	@Test
@@ -27,7 +27,7 @@ public class ArgumentsParserTest {
 		threadsArgList.add(String.valueOf(numberOfThreads));
 		ArgumentsParser argumentsParser = new ArgumentsParser(threadsArgList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.numThreads).isEqualTo(numberOfThreads);
+		assertThat(runtimeConfiguration.numberOfThreads).isEqualTo(numberOfThreads);
 	}
 
 	@Test

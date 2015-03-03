@@ -18,13 +18,13 @@ public class ArgumentsParser {
 		List<String> cucumberArgs = new ArrayList<String>();
 		List<String> featurePaths = new ArrayList<String>();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration();
-		runtimeConfiguration.numThreads = Runtime.getRuntime().availableProcessors();
+		runtimeConfiguration.numberOfThreads = Runtime.getRuntime().availableProcessors();
 		List<String> parseArguments = new ArrayList<String>(arguments);
 		while (!parseArguments.isEmpty()) {
 			String arg = parseArguments.remove(0).trim();
 			
 			if (arg.equals("--num-threads")) {
-				runtimeConfiguration.numThreads = Integer.parseInt(parseArguments.remove(0));
+				runtimeConfiguration.numberOfThreads = Integer.parseInt(parseArguments.remove(0));
 			} else if (arg.equals("--plugin") || arg.equals("-p") || arg.equals("--format") || arg.equals("-f")) {
 				String pluginValue = parseArguments.remove(0);
 				String[] pluginArgsArray = pluginValue.split(":");
