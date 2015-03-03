@@ -19,13 +19,14 @@ public class ArgumentsParser {
 		List<String> featurePaths = new ArrayList<String>();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration();
 		runtimeConfiguration.numThreads = Runtime.getRuntime().availableProcessors();
-		while (!arguments.isEmpty()) {
-			String arg = arguments.remove(0).trim();
+		List<String> parseArguments = new ArrayList<String>(arguments);
+		while (!parseArguments.isEmpty()) {
+			String arg = parseArguments.remove(0).trim();
 			
 			if (arg.equals("--num-threads")) {
-				runtimeConfiguration.numThreads = Integer.parseInt(arguments.remove(0));
+				runtimeConfiguration.numThreads = Integer.parseInt(parseArguments.remove(0));
 			} else if (arg.equals("--plugin") || arg.equals("-p") || arg.equals("--format") || arg.equals("-f")) {
-				String pluginValue = arguments.remove(0);
+				String pluginValue = parseArguments.remove(0);
 				String[] pluginArgsArray = pluginValue.split(":");
 				if (pluginArgsArray[0].equals("json")) {
 					runtimeConfiguration.jsonReportRequired = true;
@@ -39,19 +40,19 @@ public class ArgumentsParser {
 				}
 			} else if (arg.equals("--glue") || arg.equals("-g")) {
 				cucumberArgs.add(arg);
-				cucumberArgs.add(arguments.remove(0));
+				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--tags") || arg.equals("-t")) {
 				cucumberArgs.add(arg);
-				cucumberArgs.add(arguments.remove(0));
+				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--i18n")) {
 				cucumberArgs.add(arg);
-				cucumberArgs.add(arguments.remove(0));
+				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--snippets")) {
 				cucumberArgs.add(arg);
-				cucumberArgs.add(arguments.remove(0));
+				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--name") || arg.equals("-n")) {
 				cucumberArgs.add(arg);
-				cucumberArgs.add(arguments.remove(0));
+				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.startsWith("-")) {
 				cucumberArgs.add(arg);
 			}
