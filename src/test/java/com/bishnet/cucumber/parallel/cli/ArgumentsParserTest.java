@@ -7,15 +7,16 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.bishnet.cucumber.parallel.cli.ArgumentsParser;
+import com.bishnet.cucumber.parallel.runtime.RuntimeConfiguration;
 
 public class ArgumentsParserTest {
 
 	@Test
 	public void numberOfThreadsShouldMatchNumberOfProcessorsWhenNotSpecified() {
 		List<String> emptyArgList = new ArrayList<String>();
-		ArgumentsParser options = new ArgumentsParser(emptyArgList);
-		assertThat(options.getNumberOfThreads()).isEqualTo(Runtime.getRuntime().availableProcessors());
+		ArgumentsParser argumentsParser = new ArgumentsParser(emptyArgList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.numThreads).isEqualTo(Runtime.getRuntime().availableProcessors());
 	}
 	
 	@Test
@@ -24,8 +25,9 @@ public class ArgumentsParserTest {
 		List<String> threadsArgList = new ArrayList<String>();
 		threadsArgList.add("--num-threads");
 		threadsArgList.add(String.valueOf(numberOfThreads));
-		ArgumentsParser options = new ArgumentsParser(threadsArgList);
-		assertThat(options.getNumberOfThreads()).isEqualTo(numberOfThreads);
+		ArgumentsParser argumentsParser = new ArgumentsParser(threadsArgList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.numThreads).isEqualTo(numberOfThreads);
 	}
 
 	@Test
@@ -34,8 +36,9 @@ public class ArgumentsParserTest {
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("--plugin");
 		reportArgsList.add("json:" + reportPath);
-		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getJsonReportPath().toString()).isEqualTo(reportPath);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(reportPath);
 	}
 
 	@Test
@@ -44,8 +47,9 @@ public class ArgumentsParserTest {
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("-p");
 		reportArgsList.add("json:" + reportPath);
-		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getJsonReportPath().toString()).isEqualTo(reportPath);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(reportPath);
 	}
 	
 	@Test
@@ -54,8 +58,9 @@ public class ArgumentsParserTest {
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("--plugin");
 		reportArgsList.add("html:" + reportPath);
-		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getHtmlReportPath().toString()).isEqualTo(reportPath);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(reportPath);
 	}
 
 	@Test
@@ -64,8 +69,9 @@ public class ArgumentsParserTest {
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("-p");
 		reportArgsList.add("html:" + reportPath);
-		ArgumentsParser options = new ArgumentsParser(reportArgsList);
-		assertThat(options.getHtmlReportPath().toString()).isEqualTo(reportPath);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(reportPath);
 	}
 	
 	@Test
@@ -74,8 +80,9 @@ public class ArgumentsParserTest {
 		pluginArgsList.add("--plugin");
 		pluginArgsList.add("other");
 		int expectedArgCount = pluginArgsList.size();
-		ArgumentsParser options = new ArgumentsParser(pluginArgsList);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(expectedArgCount);
+		ArgumentsParser argumentsParser = new ArgumentsParser(pluginArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test
@@ -86,8 +93,9 @@ public class ArgumentsParserTest {
 		arguments.add("--plugin");
 		arguments.add("other");
 		int expectedArgCount = arguments.size() - 2;
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(expectedArgCount);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test
@@ -98,8 +106,9 @@ public class ArgumentsParserTest {
 		arguments.add("--tags");
 		arguments.add("@other");
 		int expectedArgCount = arguments.size() - 2;
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(expectedArgCount);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test
@@ -109,9 +118,10 @@ public class ArgumentsParserTest {
 		arguments.add("/absolute/feature/path");
 		arguments.add("--tags");
 		arguments.add("@other");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(2);
-		assertThat(options.getFeaturePaths().size()).isEqualTo(2);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.featurePaths.size()).isEqualTo(2);
 	}
 	
 	@Test
@@ -121,8 +131,9 @@ public class ArgumentsParserTest {
 		arguments.add("com.bishnet.glue");
 		arguments.add("-g");
 		arguments.add("com.bishnet.moreglue");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(4);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(4);
 	}
 	
 	@Test
@@ -132,8 +143,9 @@ public class ArgumentsParserTest {
 		arguments.add("testname");
 		arguments.add("-n");
 		arguments.add("anothername");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(4);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(4);
 	}
 	
 	@Test
@@ -141,8 +153,9 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--snippets");
 		arguments.add("asnippet");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(2);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(2);
 	}
 	
 	@Test
@@ -150,8 +163,9 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--i18n");
 		arguments.add("value");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(2);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(2);
 	}
 	
 	@Test
@@ -161,24 +175,27 @@ public class ArgumentsParserTest {
 		arguments.add("json:report.json");
 		arguments.add("-f");
 		arguments.add("html:reportHtml");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.getCucumberArgs().size()).isEqualTo(0);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(0);
 	}
 	
 	@Test
 	public void isHtmlReportRequiredShouldBeFalseIfNoHtmlArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--strict");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.isHtmlReportRequired()).isFalse();
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.htmlReportRequired).isFalse();
 	}
 	
 	@Test
 	public void isJsonReportRequiredShouldBeFalseIfNoJsonArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--strict");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.isJsonReportRequired()).isFalse();
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportRequired).isFalse();
 	}
 	
 	@Test
@@ -186,8 +203,9 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--plugin");
 		arguments.add("html:report");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.isHtmlReportRequired()).isTrue();
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.htmlReportRequired).isTrue();
 	}
 	
 	@Test
@@ -195,7 +213,8 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--plugin");
 		arguments.add("json:report.json");
-		ArgumentsParser options = new ArgumentsParser(arguments);
-		assertThat(options.isJsonReportRequired()).isTrue();
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportRequired).isTrue();
 	}
 }
