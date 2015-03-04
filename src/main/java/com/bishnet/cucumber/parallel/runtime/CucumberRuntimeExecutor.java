@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.bishnet.cucumber.parallel.util.DirectoryDeletionThread;
+
 import cucumber.runtime.CucumberException;
 
 public class CucumberRuntimeExecutor {
@@ -72,7 +74,7 @@ public class CucumberRuntimeExecutor {
 		}
 		if (htmlReportRequired) {
 			Path htmlReport = Files.createTempDirectory("parallelCukes");
-			htmlReport.toFile().deleteOnExit();
+			Runtime.getRuntime().addShutdownHook(new DirectoryDeletionThread(htmlReport));
 			htmlReports.add(htmlReport);
 			callableRuntimeArgs.add("--plugin");
 			callableRuntimeArgs.add("html:" + htmlReport);
