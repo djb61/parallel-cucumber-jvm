@@ -50,6 +50,7 @@ public class CucumberRuntimeExecutor {
 			runtimes.add(runtimeCallable);
 		}
 		List<Future<Byte>> futures = executor.invokeAll(runtimes);
+		executor.shutdown();
 		for (Future<Byte> future : futures)
 			try {
 				byte callableResult = future.get();
