@@ -5,11 +5,11 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class DirectoryDeletionThread extends Thread {
+public class RemoveDirectoryRunnable implements Runnable {
 
 	private Path dirToDelete;
 	
-	public DirectoryDeletionThread(Path dirToDelete) {
+	public RemoveDirectoryRunnable(Path dirToDelete) {
 		this.dirToDelete = dirToDelete;
 	}
 	
