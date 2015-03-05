@@ -4,6 +4,7 @@ plugins {
 }
 
 sourceCompatibility = 1.7
+version = 0.1
 
 repositories {
 	mavenCentral()
@@ -12,7 +13,9 @@ repositories {
 dependencies {
 	testCompile 'junit:junit:4.11'
 	testCompile 'org.easytesting:fest-assert:1.4'
+	testCompile 'info.cukes:cucumber-java:1.2.2'
 	compile 'info.cukes:cucumber-core:1.2.2'
+	compile 'org.apache.commons:commons-collections4:4.0'
 }
 
 task wrapper(type: Wrapper) {
