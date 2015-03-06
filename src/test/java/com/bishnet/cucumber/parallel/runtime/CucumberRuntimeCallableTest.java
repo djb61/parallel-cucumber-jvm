@@ -1,7 +1,6 @@
 package com.bishnet.cucumber.parallel.runtime;
 
-import static org.fest.assertions.Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 
 import org.junit.Test;

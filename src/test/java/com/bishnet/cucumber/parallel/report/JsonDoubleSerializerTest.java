@@ -1,6 +1,6 @@
 package com.bishnet.cucumber.parallel.report;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import gherkin.deps.com.google.gson.JsonPrimitive;
 
 import org.junit.Test;

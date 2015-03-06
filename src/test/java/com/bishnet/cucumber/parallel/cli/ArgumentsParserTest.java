@@ -1,7 +1,6 @@
 package com.bishnet.cucumber.parallel.cli;
 
-import static org.fest.assertions.Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.numberOfThreads).isEqualTo(Runtime.getRuntime().availableProcessors());
 	}
-	
+
 	@Test
 	public void numberOfThreadsCanBeSetByAnArgument() {
 		int numberOfThreads = 10;
@@ -51,7 +50,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(reportPath);
 	}
-	
+
 	@Test
 	public void finalReportPathIsParsedFromHtmlPluginArgument() {
 		String reportPath = "report/myreport";
@@ -73,7 +72,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(reportPath);
 	}
-	
+
 	@Test
 	public void pluginArgumentWhichIsNotJsonOrHtmlShouldBePassedThroughToResultingCucumberArgsList() {
 		List<String> pluginArgsList = new ArrayList<String>();
@@ -84,7 +83,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
 	}
-	
+
 	@Test
 	public void numberOfThreadsArgumentShouldBeRemovedFromResultingCucumberArgsList() {
 		List<String> arguments = new ArrayList<String>();
@@ -97,7 +96,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
 	}
-	
+
 	@Test
 	public void pluginArgumentShouldBeRemovedFromResultingCucumberArgsList() {
 		List<String> arguments = new ArrayList<String>();
@@ -110,7 +109,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
 	}
-	
+
 	@Test
 	public void featurePathArgumentsShouldBeRemovedFromCucumberArgsAndAddedToFeaturePaths() {
 		List<String> arguments = new ArrayList<String>();
@@ -123,9 +122,9 @@ public class ArgumentsParserTest {
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
 		assertThat(runtimeConfiguration.featurePaths.size()).isEqualTo(2);
 	}
-	
+
 	@Test
-	public void glueArgumentShouldBePassedThroughToCucumberArgsList(){
+	public void glueArgumentShouldBePassedThroughToCucumberArgsList() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--glue");
 		arguments.add("com.bishnet.glue");
@@ -135,9 +134,9 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(4);
 	}
-	
+
 	@Test
-	public void nameArgumentShouldNotBePassedThroughToCucumberArgsListButShouldBePresentInFeatureParseArgsList(){
+	public void nameArgumentShouldNotBePassedThroughToCucumberArgsListButShouldBePresentInFeatureParseArgsList() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--name");
 		arguments.add("testname");
@@ -148,9 +147,9 @@ public class ArgumentsParserTest {
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 		assertThat(runtimeConfiguration.featureParsingArguments.size()).isEqualTo(4);
 	}
-	
+
 	@Test
-	public void tagArgumentShouldNotBePassedThroughToCucumberArgsListButShouldBePresentInFeatureParseArgsList(){
+	public void tagArgumentShouldNotBePassedThroughToCucumberArgsListButShouldBePresentInFeatureParseArgsList() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--tags");
 		arguments.add("@testTag");
@@ -161,9 +160,9 @@ public class ArgumentsParserTest {
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 		assertThat(runtimeConfiguration.featureParsingArguments.size()).isEqualTo(4);
 	}
-	
+
 	@Test
-	public void snippetsArgumentShouldBePassedThroughToCucumberArgsList(){
+	public void snippetsArgumentShouldBePassedThroughToCucumberArgsList() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--snippets");
 		arguments.add("asnippet");
@@ -171,9 +170,9 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
 	}
-	
+
 	@Test
-	public void internationalisationArgumentShouldBePassedThroughToCucumberArgsList(){
+	public void internationalisationArgumentShouldBePassedThroughToCucumberArgsList() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--i18n");
 		arguments.add("value");
@@ -181,7 +180,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
 	}
-	
+
 	@Test
 	public void formatArgumentShouldBeRemovedFromResultingCucumberArgsList() {
 		List<String> arguments = new ArrayList<String>();
@@ -193,7 +192,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 	}
-	
+
 	@Test
 	public void isHtmlReportRequiredShouldBeFalseIfNoHtmlArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
@@ -202,7 +201,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.htmlReportRequired).isFalse();
 	}
-	
+
 	@Test
 	public void isJsonReportRequiredShouldBeFalseIfNoJsonArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
@@ -211,7 +210,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.jsonReportRequired).isFalse();
 	}
-	
+
 	@Test
 	public void isHtmlReportRequiredShouldBeTrueIfHtmlArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
@@ -221,7 +220,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.htmlReportRequired).isTrue();
 	}
-	
+
 	@Test
 	public void isJsonReportRequiredShouldBeTrueIfJsonArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
