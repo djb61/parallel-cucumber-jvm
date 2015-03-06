@@ -82,7 +82,7 @@ public class ArgumentsParserTest {
 		int expectedArgCount = pluginArgsList.size();
 		ArgumentsParser argumentsParser = new ArgumentsParser(pluginArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(expectedArgCount);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test
@@ -95,7 +95,7 @@ public class ArgumentsParserTest {
 		int expectedArgCount = arguments.size() - 2;
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(expectedArgCount);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test
@@ -103,12 +103,12 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--plugin");
 		arguments.add("json:report.json");
-		arguments.add("--tags");
-		arguments.add("@other");
+		arguments.add("--snippets");
+		arguments.add("asnippet");
 		int expectedArgCount = arguments.size() - 2;
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(expectedArgCount);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
 	}
 	
 	@Test
@@ -116,11 +116,11 @@ public class ArgumentsParserTest {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:featurepath");
 		arguments.add("/absolute/feature/path");
-		arguments.add("--tags");
-		arguments.add("@other");
+		arguments.add("--snippets");
+		arguments.add("asnippet");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
 		assertThat(runtimeConfiguration.featurePaths.size()).isEqualTo(2);
 	}
 	
@@ -133,11 +133,11 @@ public class ArgumentsParserTest {
 		arguments.add("com.bishnet.moreglue");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(4);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(4);
 	}
 	
 	@Test
-	public void nameArgumentShouldBePassedThroughToCucumberArgsList(){
+	public void nameArgumentShouldNotBePassedThroughToCucumberArgsListButShouldBePresentInFeatureParseArgsList(){
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--name");
 		arguments.add("testname");
@@ -145,7 +145,21 @@ public class ArgumentsParserTest {
 		arguments.add("anothername");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(4);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
+		assertThat(runtimeConfiguration.featureParsingArguments.size()).isEqualTo(4);
+	}
+	
+	@Test
+	public void tagArgumentShouldNotBePassedThroughToCucumberArgsListButShouldBePresentInFeatureParseArgsList(){
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--tags");
+		arguments.add("@testTag");
+		arguments.add("-t");
+		arguments.add("@anotherTestTag");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
+		assertThat(runtimeConfiguration.featureParsingArguments.size()).isEqualTo(4);
 	}
 	
 	@Test
@@ -155,7 +169,7 @@ public class ArgumentsParserTest {
 		arguments.add("asnippet");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
 	}
 	
 	@Test
@@ -165,7 +179,7 @@ public class ArgumentsParserTest {
 		arguments.add("value");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
 	}
 	
 	@Test
@@ -177,7 +191,7 @@ public class ArgumentsParserTest {
 		arguments.add("html:reportHtml");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberArgs.size()).isEqualTo(0);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 	}
 	
 	@Test

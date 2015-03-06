@@ -16,6 +16,7 @@ public class ArgumentsParser {
 	
 	public RuntimeConfiguration parse() {
 		List<String> cucumberArgs = new ArrayList<String>();
+		List<String> featureParseOnlyArgs = new ArrayList<String>();
 		List<String> featurePaths = new ArrayList<String>();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration();
 		runtimeConfiguration.numberOfThreads = Runtime.getRuntime().availableProcessors();
@@ -42,8 +43,8 @@ public class ArgumentsParser {
 				cucumberArgs.add(arg);
 				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--tags") || arg.equals("-t")) {
-				cucumberArgs.add(arg);
-				cucumberArgs.add(parseArguments.remove(0));
+				featureParseOnlyArgs.add(arg);
+				featureParseOnlyArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--i18n")) {
 				cucumberArgs.add(arg);
 				cucumberArgs.add(parseArguments.remove(0));
@@ -51,8 +52,8 @@ public class ArgumentsParser {
 				cucumberArgs.add(arg);
 				cucumberArgs.add(parseArguments.remove(0));
 			} else if (arg.equals("--name") || arg.equals("-n")) {
-				cucumberArgs.add(arg);
-				cucumberArgs.add(parseArguments.remove(0));
+				featureParseOnlyArgs.add(arg);
+				featureParseOnlyArgs.add(parseArguments.remove(0));
 			} else if (arg.startsWith("-")) {
 				cucumberArgs.add(arg);
 			}
@@ -60,8 +61,13 @@ public class ArgumentsParser {
 				featurePaths.add(arg);
 			}
 		}
-		runtimeConfiguration.cucumberArgs = cucumberArgs;
+		List<String> fullFeatureParsingArguments = new ArrayList<String>();
+		fullFeatureParsingArguments.addAll(cucumberArgs);
+		fullFeatureParsingArguments.addAll(featureParseOnlyArgs);
+		fullFeatureParsingArguments.addAll(featurePaths);
+		runtimeConfiguration.featureParsingArguments = fullFeatureParsingArguments;
 		runtimeConfiguration.featurePaths = featurePaths;
+		runtimeConfiguration.cucumberPassthroughArguments = cucumberArgs;
 		return runtimeConfiguration;
 	}
 }

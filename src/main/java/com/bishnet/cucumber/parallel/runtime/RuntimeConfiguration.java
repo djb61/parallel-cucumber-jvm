@@ -6,7 +6,8 @@ import java.util.List;
 public class RuntimeConfiguration {
 
 	public int numberOfThreads;
-	public List<String> cucumberArgs;
+	public List<String> cucumberPassthroughArguments;
+	public List<String> featureParsingArguments;
 	public List<String> featurePaths;
 	public Path htmlReportPath;
 	public Path jsonReportPath;
