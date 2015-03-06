@@ -1,6 +1,5 @@
 package com.bishnet.cucumber.parallel.runtime;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cucumber.runtime.ClassFinder;
@@ -17,7 +16,7 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 	private int invocationCount;
 	
 	public FakeCucumberRuntimeFactory(byte[] perInvocationExitCodes, boolean[] perInvocationShouldThrowException) {
-		super(new ArrayList<String>(), new ArrayList<String>());
+		super(new RuntimeConfiguration(0, null, null, null, null, false, null, false));
 		this.perInvocationExitCodes = perInvocationExitCodes;
 		this.perInvocationShouldThrowException = perInvocationShouldThrowException;
 	}

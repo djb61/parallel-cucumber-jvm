@@ -18,16 +18,14 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 
 public class CucumberRuntimeFactory {
 
-	private List<String> featurePaths;
-	private List<String> baseCucumberArguments;
+	private RuntimeConfiguration runtimeConfiguration;
 	
-	public CucumberRuntimeFactory(List<String> featurePaths, List<String> baseCucumberArguments) {
-		this.featurePaths = featurePaths;
-		this.baseCucumberArguments = baseCucumberArguments;
+	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration) {
+		this.runtimeConfiguration = runtimeConfiguration;
 	}
 	
 	public Runtime getRuntime(List<String> additionalCucumberArguments) {
-		List<String> runtimeCucumberArguments = new ArrayList<String>(baseCucumberArguments);
+		List<String> runtimeCucumberArguments = new ArrayList<String>(runtimeConfiguration.cucumberPassthroughArguments);
 		runtimeCucumberArguments.addAll(additionalCucumberArguments);
 		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeCucumberArguments);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -56,7 +54,7 @@ public class CucumberRuntimeFactory {
 	
 	private List<Path> getFileSystemFeaturePaths() {
 		List<Path> fileSystemFeaturePaths = new ArrayList<Path>();
-		for (String featurePath : featurePaths) {
+		for (String featurePath : runtimeConfiguration.featurePaths) {
 			if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME))
 				fileSystemFeaturePaths.add(Paths.get(featurePath));
 		}

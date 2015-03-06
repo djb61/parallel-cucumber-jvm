@@ -17,8 +17,9 @@ public class FeatureSplitterTest {
 	public void whenPassedARequestForOneThreadShouldReturnOneRerunFile() throws IOException {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/directory");
-		FeatureParser featureParser = new FeatureParser(arguments);
-		FeatureSplitter featureSplitter = new FeatureSplitter(featureParser.parseFeatures(), 1);
+		RuntimeConfiguration runtimeConfiguration = getRuntimeConfiguration(arguments, 1);
+		FeatureParser featureParser = new FeatureParser(runtimeConfiguration);
+		FeatureSplitter featureSplitter = new FeatureSplitter(runtimeConfiguration, featureParser.parseFeatures());
 		List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
 		assertThat(rerunFiles.size()).isEqualTo(1);
 	}
@@ -27,8 +28,9 @@ public class FeatureSplitterTest {
 	public void whenPassedARequestForTwoThreadsShouldReturnTwoRerunFiles() throws IOException {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/directory");
-		FeatureParser featureParser = new FeatureParser(arguments);
-		FeatureSplitter featureSplitter = new FeatureSplitter(featureParser.parseFeatures(), 2);
+		RuntimeConfiguration runtimeConfiguration = getRuntimeConfiguration(arguments, 2);
+		FeatureParser featureParser = new FeatureParser(runtimeConfiguration);
+		FeatureSplitter featureSplitter = new FeatureSplitter(runtimeConfiguration, featureParser.parseFeatures());
 		List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
 		assertThat(rerunFiles.size()).isEqualTo(2);
 	}
@@ -37,10 +39,15 @@ public class FeatureSplitterTest {
 	public void whenPassedARequestForMoreThreadsThanFeaturesShouldReturnRerunFilesEqualToFeatureCount() throws IOException {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/directory");
-		FeatureParser featureParser = new FeatureParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = getRuntimeConfiguration(arguments, 10);
+		FeatureParser featureParser = new FeatureParser(runtimeConfiguration);
 		List<CucumberFeature> features = featureParser.parseFeatures();
-		FeatureSplitter featureSplitter = new FeatureSplitter(features, 10);
+		FeatureSplitter featureSplitter = new FeatureSplitter(runtimeConfiguration, features);
 		List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
 		assertThat(rerunFiles.size()).isEqualTo(features.size());
+	}
+	
+	private RuntimeConfiguration getRuntimeConfiguration(List<String> featureParsingArguments, int numberOfThreads) {
+		return new RuntimeConfiguration(numberOfThreads, null, featureParsingArguments, null, null, false, null, false);
 	}
 }

@@ -16,18 +16,18 @@ import cucumber.runtime.model.CucumberFeature;
 
 public class FeatureSplitter {
 
+	private RuntimeConfiguration runtimeConfiguration;
 	private List<CucumberFeature> features;
-	private int numThreads;
 	
-	public FeatureSplitter(List<CucumberFeature> features, int numThreads) {
+	public FeatureSplitter(RuntimeConfiguration runtimeConfiguration, List<CucumberFeature> features) {
+		this.runtimeConfiguration = runtimeConfiguration;
 		this.features = features;
-		this.numThreads = numThreads;
 	}
 	
 	public List<Path> splitFeaturesIntoRerunFiles() throws IOException {
 		List<Path> rerunPaths = new ArrayList<Path>();
-		int featuresPerThread = features.size() / numThreads;
-		if (features.size() % numThreads > 0)
+		int featuresPerThread = features.size() / runtimeConfiguration.numberOfThreads;
+		if (features.size() % runtimeConfiguration.numberOfThreads > 0)
 			featuresPerThread = featuresPerThread + 1;
 		List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(features, featuresPerThread);
 		

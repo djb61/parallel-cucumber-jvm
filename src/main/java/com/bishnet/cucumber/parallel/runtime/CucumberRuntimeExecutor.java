@@ -18,17 +18,15 @@ public class CucumberRuntimeExecutor {
 
 	private CucumberRuntimeFactory runtimeFactory;
 	private List<Path> rerunFiles;
-	private boolean htmlReportRequired;
-	private boolean jsonReportRequired;
+	private RuntimeConfiguration runtimeConfiguration;
 	private List<Path> htmlReports = new ArrayList<Path>();
 	private List<Path> jsonReports = new ArrayList<Path>();
 
 	public CucumberRuntimeExecutor(CucumberRuntimeFactory runtimeFactory, List<Path> rerunFiles,
-			boolean htmlReportRequired, boolean jsonReportRequired) {
+			RuntimeConfiguration runtimeConfiguration) {
 		this.runtimeFactory = runtimeFactory;
 		this.rerunFiles = rerunFiles;
-		this.htmlReportRequired = htmlReportRequired;
-		this.jsonReportRequired = jsonReportRequired;
+		this.runtimeConfiguration = runtimeConfiguration;
 	}
 	
 	public List<Path> getHtmlReports() {
@@ -66,14 +64,14 @@ public class CucumberRuntimeExecutor {
 
 	private List<String> buildCallableRuntimeArgs(Path rerunFile) throws IOException {
 		List<String> callableRuntimeArgs = new ArrayList<String>();
-		if (jsonReportRequired) {
+		if (runtimeConfiguration.jsonReportRequired) {
 			Path jsonReport = Files.createTempFile("parallelCukes", ".json");
 			jsonReport.toFile().deleteOnExit();
 			jsonReports.add(jsonReport);
 			callableRuntimeArgs.add("--plugin");
 			callableRuntimeArgs.add("json:" + jsonReport);
 		}
-		if (htmlReportRequired) {
+		if (runtimeConfiguration.htmlReportRequired) {
 			Path htmlReport = Files.createTempDirectory("parallelCukes");
 			Runtime.getRuntime().addShutdownHook(new Thread(new RemoveDirectoryRunnable(htmlReport)));
 			htmlReports.add(htmlReport);

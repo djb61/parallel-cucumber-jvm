@@ -9,14 +9,14 @@ import cucumber.runtime.model.CucumberFeature;
 
 public class FeatureParser {
 	
-	private List<String> arguments;
+	private RuntimeConfiguration runtimeConfiguration;
 
-	public FeatureParser(List<String> arguments) {
-		this.arguments = arguments;
+	public FeatureParser(RuntimeConfiguration runtimeConfiguration) {
+		this.runtimeConfiguration = runtimeConfiguration;
 	}
 	
 	public List<CucumberFeature> parseFeatures() {
-		RuntimeOptions runtimeOptions = new RuntimeOptions(arguments);
+		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeConfiguration.featureParsingArguments);
 		ResourceLoader resourceLoader = new MultiLoader(Thread.currentThread().getContextClassLoader());
 		return runtimeOptions.cucumberFeatures(resourceLoader);
 	}
