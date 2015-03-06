@@ -78,10 +78,10 @@ public class ArgumentsParserTest {
 		List<String> pluginArgsList = new ArrayList<String>();
 		pluginArgsList.add("--plugin");
 		pluginArgsList.add("other");
-		int expectedArgCount = pluginArgsList.size();
 		ArgumentsParser argumentsParser = new ArgumentsParser(pluginArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).contains("--plugin", "other");
 	}
 
 	@Test
@@ -91,10 +91,10 @@ public class ArgumentsParserTest {
 		arguments.add("10");
 		arguments.add("--plugin");
 		arguments.add("other");
-		int expectedArgCount = arguments.size() - 2;
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).doesNotContain("--num-threads", "10");
 	}
 
 	@Test
@@ -104,10 +104,10 @@ public class ArgumentsParserTest {
 		arguments.add("json:report.json");
 		arguments.add("--snippets");
 		arguments.add("asnippet");
-		int expectedArgCount = arguments.size() - 2;
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(expectedArgCount);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).doesNotContain("--plugin", "json:report.json");
 	}
 
 	@Test
@@ -120,7 +120,9 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).doesNotContain("classpath:featurepath", "/absolute/feature/path");
 		assertThat(runtimeConfiguration.featurePaths.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.featurePaths).contains("classpath:featurepath", "/absolute/feature/path");
 	}
 
 	@Test
@@ -133,6 +135,7 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(4);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).contains("--glue", "com.bishnet.glue", "-g", "com.bishnet.moreglue");
 	}
 
 	@Test
@@ -146,6 +149,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 		assertThat(runtimeConfiguration.featureParsingArguments.size()).isEqualTo(4);
+		assertThat(runtimeConfiguration.featureParsingArguments).contains("--name", "testname", "-n", "anothername");
 	}
 
 	@Test
@@ -159,6 +163,7 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 		assertThat(runtimeConfiguration.featureParsingArguments.size()).isEqualTo(4);
+		assertThat(runtimeConfiguration.featureParsingArguments).contains("--tags", "@testTag", "-t", "@anotherTestTag");
 	}
 
 	@Test
@@ -169,6 +174,7 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).contains("--snippets", "asnippet");
 	}
 
 	@Test
@@ -179,6 +185,7 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).contains("--i18n", "value");
 	}
 
 	@Test
