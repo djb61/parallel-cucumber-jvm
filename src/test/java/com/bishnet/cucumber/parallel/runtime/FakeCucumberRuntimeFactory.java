@@ -23,7 +23,7 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 	}
 	
 	@Override
-	public Runtime getRuntime(List<String> additionalCucumberArgs) {
+	public synchronized Runtime getRuntime(List<String> additionalCucumberArgs) {
 		RuntimeOptions runtimeOptions = new RuntimeOptions(additionalCucumberArgs);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ResourceLoader resourceLoader = new MultiLoader(classLoader);
