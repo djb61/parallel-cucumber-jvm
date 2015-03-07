@@ -5,8 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.ListIterator;
@@ -28,13 +30,13 @@ public class HtmlReportMerger {
 		for (Path reportDir : reportDirs) {
 			if (firstReport) {
 				copyResourceFiles(reportDir, mergedReport);
-				firstReport = false;
 			}
-			copyImagesAndJavaScriptWithImageRename(reportDir, mergedReport);
+			copyImagesAndJavaScriptWithImageRename(reportDir, mergedReport, firstReport);
+			firstReport = false;
 		}
 	}
 	
-	private void copyImagesAndJavaScriptWithImageRename(Path reportDir, Path targetDir) throws IOException {
+	private void copyImagesAndJavaScriptWithImageRename(Path reportDir, Path targetDir, boolean overwriteReport) throws IOException {
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(reportDir, IMAGE_PATTERN)) {
 			List<String> reportJs = Files.readAllLines(reportDir.resolve(REPORT_JS), StandardCharsets.UTF_8);
 			for (Path embeddedImage : dirStream) {
@@ -45,7 +47,12 @@ public class HtmlReportMerger {
 					listIterator.set(listIterator.next().replace(embeddedImage.getFileName().toString(), uniqueName));
 				}
 			}
-			Files.write(targetDir.resolve(REPORT_JS), reportJs, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+			OpenOption[] copyOptions;
+			if (overwriteReport)
+				copyOptions = new OpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING };
+			else
+				copyOptions = new OpenOption[] { StandardOpenOption.APPEND };
+			Files.write(targetDir.resolve(REPORT_JS), reportJs, StandardCharsets.UTF_8, copyOptions);
 		}
 	}
 	
@@ -54,7 +61,7 @@ public class HtmlReportMerger {
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(sourceDir)) {
 			for (Path resourceFile : dirStream)
 				if (!reportAndImageMatcher.matches(resourceFile.getFileName()))
-					Files.copy(resourceFile, targetDir.resolve(resourceFile.getFileName()));
+					Files.copy(resourceFile, targetDir.resolve(resourceFile.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 }
