@@ -20,28 +20,29 @@ public class CucumberRuntimeFactory {
 
 	private RuntimeConfiguration runtimeConfiguration;
 	private CucumberBackendFactory cucumberBackendFactory;
+	private ClassLoader cucumberClassLoader;
 
-	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration) {
-		this(runtimeConfiguration, null);
+	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, ClassLoader cucumberClassLoader) {
+		this(runtimeConfiguration, null, cucumberClassLoader);
 	}
 
-	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory) {
+	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory, ClassLoader cucumberClassLoader) {
 		this.runtimeConfiguration = runtimeConfiguration;
 		this.cucumberBackendFactory = cucumberBackendFactory;
+		this.cucumberClassLoader = cucumberClassLoader;
 	}
 
 	public Runtime getRuntime(List<String> additionalCucumberArguments) {
 		List<String> runtimeCucumberArguments = new ArrayList<String>(runtimeConfiguration.cucumberPassthroughArguments);
 		runtimeCucumberArguments.addAll(additionalCucumberArguments);
 		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeCucumberArguments);
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ResourceLoader resourceLoader = getResourceLoader();
 		Runtime runtime = null;
 		if (cucumberBackendFactory == null) {
-			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-			runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, cucumberClassLoader);
+			runtime = new Runtime(resourceLoader, classFinder, cucumberClassLoader, runtimeOptions);
 		} else {
-			runtime = new Runtime(resourceLoader, classLoader, cucumberBackendFactory.getBackends(), runtimeOptions);
+			runtime = new Runtime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions);
 		}
 		return runtime;
 	}
