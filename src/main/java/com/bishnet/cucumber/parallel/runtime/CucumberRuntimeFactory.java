@@ -50,7 +50,7 @@ public class CucumberRuntimeFactory {
 	private ResourceLoader getResourceLoader() {
 		List<Path> fileSystemFeaturePaths = getFileSystemFeaturePaths();
 		if (fileSystemFeaturePaths.size() == 0)
-			return new MultiLoader(Thread.currentThread().getContextClassLoader());
+			return new MultiLoader(cucumberClassLoader);
 		URL[] urls = new URL[fileSystemFeaturePaths.size()];
 		int index = 0;
 		for (Path featurePath : fileSystemFeaturePaths) {
@@ -61,7 +61,7 @@ public class CucumberRuntimeFactory {
 			}
 			index++;
 		}
-		URLClassLoader featuresLoader = new URLClassLoader(urls);
+		URLClassLoader featuresLoader = new URLClassLoader(urls, cucumberClassLoader);
 		return new MultiLoader(featuresLoader);
 	}
 
