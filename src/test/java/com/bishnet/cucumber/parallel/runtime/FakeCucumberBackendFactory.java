@@ -1,6 +1,6 @@
 package com.bishnet.cucumber.parallel.runtime;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cucumber.runtime.Backend;
@@ -17,9 +17,7 @@ public class FakeCucumberBackendFactory implements CucumberBackendFactory {
 		wasInvoked = true;
 		ResourceLoader resourceLoader = new MultiLoader(Thread.currentThread().getContextClassLoader());
 		Backend backend = new JavaBackend(resourceLoader);
-		ArrayList<Backend> backends = new ArrayList<Backend>();
-		backends.add(backend);
-		return backends;
+		return Arrays.asList(backend);
 	}
 
 	public boolean wasInvoked() {
