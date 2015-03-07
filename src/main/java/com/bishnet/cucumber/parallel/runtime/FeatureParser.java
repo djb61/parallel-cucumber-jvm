@@ -10,14 +10,16 @@ import cucumber.runtime.model.CucumberFeature;
 public class FeatureParser {
 	
 	private RuntimeConfiguration runtimeConfiguration;
-
-	public FeatureParser(RuntimeConfiguration runtimeConfiguration) {
+	private ClassLoader featureClassLoader;
+	
+	public FeatureParser(RuntimeConfiguration runtimeConfiguration, ClassLoader featureClassLoader) {
 		this.runtimeConfiguration = runtimeConfiguration;
+		this.featureClassLoader = featureClassLoader;
 	}
 	
 	public List<CucumberFeature> parseFeatures() {
 		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeConfiguration.featureParsingArguments);
-		ResourceLoader resourceLoader = new MultiLoader(Thread.currentThread().getContextClassLoader());
+		ResourceLoader resourceLoader = new MultiLoader(featureClassLoader);
 		return runtimeOptions.cucumberFeatures(resourceLoader);
 	}
 }

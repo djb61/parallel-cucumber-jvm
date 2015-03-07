@@ -17,7 +17,7 @@ public class FeatureParserTest {
 	public void singleFeatureFileWithValidScenariosShouldReturnOneFeature() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/ValidFeature.feature");
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments));
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
 		List<CucumberFeature> features = featureParser.parseFeatures();
 		assertThat(features.size()).isEqualTo(1);
 	}
@@ -26,7 +26,7 @@ public class FeatureParserTest {
 	public void featureDirectoryWithTwoValidFeaturesShouldReturnTwoFeatures() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/directory");
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments));
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
 		List<CucumberFeature> features = featureParser.parseFeatures();
 		assertThat(features.size()).isEqualTo(2);
 	}
@@ -35,7 +35,7 @@ public class FeatureParserTest {
 	public void singleFeatureFileWithAnInvalidScenarioShouldThrowACucumberException() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/InvalidFeature.feature");
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments));
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
 		featureParser.parseFeatures();
 	}
 	
