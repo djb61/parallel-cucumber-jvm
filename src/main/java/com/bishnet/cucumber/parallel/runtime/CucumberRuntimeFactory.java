@@ -19,21 +19,33 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 public class CucumberRuntimeFactory {
 
 	private RuntimeConfiguration runtimeConfiguration;
-	
+	private CucumberBackendFactory cucumberBackendFactory;
+
 	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration) {
-		this.runtimeConfiguration = runtimeConfiguration;
+		this(runtimeConfiguration, null);
 	}
-	
+
+	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory) {
+		this.runtimeConfiguration = runtimeConfiguration;
+		this.cucumberBackendFactory = cucumberBackendFactory;
+	}
+
 	public Runtime getRuntime(List<String> additionalCucumberArguments) {
 		List<String> runtimeCucumberArguments = new ArrayList<String>(runtimeConfiguration.cucumberPassthroughArguments);
 		runtimeCucumberArguments.addAll(additionalCucumberArguments);
 		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeCucumberArguments);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ResourceLoader resourceLoader = getResourceLoader();
-		ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+		Runtime runtime = null;
+		if (cucumberBackendFactory == null) {
+			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+			runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+		} else {
+			runtime = new Runtime(resourceLoader, classLoader, cucumberBackendFactory.getBackends(), runtimeOptions);
+		}
+		return runtime;
 	}
-	
+
 	private ResourceLoader getResourceLoader() {
 		List<Path> fileSystemFeaturePaths = getFileSystemFeaturePaths();
 		if (fileSystemFeaturePaths.size() == 0)
@@ -51,7 +63,7 @@ public class CucumberRuntimeFactory {
 		URLClassLoader featuresLoader = new URLClassLoader(urls);
 		return new MultiLoader(featuresLoader);
 	}
-	
+
 	private List<Path> getFileSystemFeaturePaths() {
 		List<Path> fileSystemFeaturePaths = new ArrayList<Path>();
 		for (String featurePath : runtimeConfiguration.featurePaths) {
