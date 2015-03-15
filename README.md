@@ -7,7 +7,7 @@ To start a CLI test run use the main method in this class
 ``` java
 com.bishnet.cucumber.parallel.cli.Main
 ```
-The command line API matches that of cucumber-jvm as described [here](https://raw.githubusercontent.com/cucumber/cucumber-jvm/v1.2.2/core/src/main/resources/cucumber/api/cli/USAGE.txt)
+The command line API matches that of cucumber-jvm as described [here](https://raw.githubusercontent.com/cucumber/cucumber-jvm/v1.2.2/core/src/main/resources/cucumber/api/cli/USAGE.txt).
 A single additional argument is supported to control the level of parallelism.
 ```
 --num-threads <n> # Defaults to the number of available cores if not specified
