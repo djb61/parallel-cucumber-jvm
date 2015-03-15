@@ -26,7 +26,8 @@ public class CucumberRuntimeFactory {
 		this(runtimeConfiguration, null, cucumberClassLoader);
 	}
 
-	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory, ClassLoader cucumberClassLoader) {
+	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory,
+			ClassLoader cucumberClassLoader) {
 		this.runtimeConfiguration = runtimeConfiguration;
 		this.cucumberBackendFactory = cucumberBackendFactory;
 		this.cucumberClassLoader = cucumberClassLoader;

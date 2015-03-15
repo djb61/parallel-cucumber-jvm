@@ -8,11 +8,11 @@ import java.nio.file.Path;
 public class RemoveDirectoryRunnable implements Runnable {
 
 	private Path dirToDelete;
-	
+
 	public RemoveDirectoryRunnable(Path dirToDelete) {
 		this.dirToDelete = dirToDelete;
 	}
-	
+
 	@Override
 	public void run() {
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(dirToDelete)) {

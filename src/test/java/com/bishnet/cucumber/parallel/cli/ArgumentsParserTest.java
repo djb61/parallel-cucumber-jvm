@@ -1,6 +1,7 @@
 package com.bishnet.cucumber.parallel.cli;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +121,8 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(2);
-		assertThat(runtimeConfiguration.cucumberPassthroughArguments).doesNotContain("classpath:featurepath", "/absolute/feature/path");
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).doesNotContain("classpath:featurepath",
+				"/absolute/feature/path");
 		assertThat(runtimeConfiguration.featurePaths.size()).isEqualTo(2);
 		assertThat(runtimeConfiguration.featurePaths).contains("classpath:featurepath", "/absolute/feature/path");
 	}
@@ -135,7 +137,8 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(4);
-		assertThat(runtimeConfiguration.cucumberPassthroughArguments).contains("--glue", "com.bishnet.glue", "-g", "com.bishnet.moreglue");
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments).contains("--glue", "com.bishnet.glue", "-g",
+				"com.bishnet.moreglue");
 	}
 
 	@Test

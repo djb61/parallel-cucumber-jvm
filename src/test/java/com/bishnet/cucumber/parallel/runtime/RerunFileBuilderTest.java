@@ -12,7 +12,7 @@ import org.junit.Test;
 import cucumber.runtime.model.CucumberFeature;
 
 public class RerunFileBuilderTest {
-	
+
 	private FakeRerunFormatter fakeRerunFormatter;
 	private RerunFileBuilder rerunFileBuilder;
 
@@ -27,8 +27,9 @@ public class RerunFileBuilderTest {
 		String featurePath = "com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/ValidFeature.feature";
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:" + featurePath);
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
-		for(CucumberFeature cucumberFeature : featureParser.parseFeatures())
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread()
+				.getContextClassLoader());
+		for (CucumberFeature cucumberFeature : featureParser.parseFeatures())
 			rerunFileBuilder.addFeature(cucumberFeature);
 		assertThat(fakeRerunFormatter.getUri()).isEqualTo(featurePath);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(1);
@@ -37,14 +38,15 @@ public class RerunFileBuilderTest {
 		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(1);
 		assertThat(fakeRerunFormatter.getResult().getStatus()).isEqualTo(Result.FAILED);
 	}
-	
+
 	@Test
 	public void formatterCalledCorrectlyForAFeatureWithThreeScenarios() {
 		String featurePath = "com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/ValidFeatureThreeScenarios.feature";
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:" + featurePath);
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
-		for(CucumberFeature cucumberFeature : featureParser.parseFeatures())
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread()
+				.getContextClassLoader());
+		for (CucumberFeature cucumberFeature : featureParser.parseFeatures())
 			rerunFileBuilder.addFeature(cucumberFeature);
 		assertThat(fakeRerunFormatter.getUri()).isEqualTo(featurePath);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(3);
@@ -52,27 +54,29 @@ public class RerunFileBuilderTest {
 		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(3);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(1);
 	}
-	
+
 	@Test
 	public void formatterCalledCorrectlyForTwoFeaturesWithTotalFiveScenarios() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/directory");
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
-		for(CucumberFeature cucumberFeature : featureParser.parseFeatures())
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread()
+				.getContextClassLoader());
+		for (CucumberFeature cucumberFeature : featureParser.parseFeatures())
 			rerunFileBuilder.addFeature(cucumberFeature);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(5);
 		assertThat(fakeRerunFormatter.getEndOfLifeCycleInvocationCount()).isEqualTo(5);
 		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(5);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(2);
 	}
-	
+
 	@Test
 	public void formatterCalledCorrectlyForAFeatureWithAScenarioOutlineWithTwoExamples() {
 		String featurePath = "com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/ValidFeatureWithScenarioOutlineWithTwoExamples.feature";
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("classpath:" + featurePath);
-		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread().getContextClassLoader());
-		for(CucumberFeature cucumberFeature : featureParser.parseFeatures())
+		FeatureParser featureParser = new FeatureParser(getRuntimeConfiguration(arguments), Thread.currentThread()
+				.getContextClassLoader());
+		for (CucumberFeature cucumberFeature : featureParser.parseFeatures())
 			rerunFileBuilder.addFeature(cucumberFeature);
 		assertThat(fakeRerunFormatter.getUri()).isEqualTo(featurePath);
 		assertThat(fakeRerunFormatter.getStartOfLifeCycleInvocationCount()).isEqualTo(2);
@@ -80,14 +84,14 @@ public class RerunFileBuilderTest {
 		assertThat(fakeRerunFormatter.getScenarioInvocationCount()).isEqualTo(2);
 		assertThat(fakeRerunFormatter.getUriInvocationCount()).isEqualTo(1);
 	}
-	
+
 	@Test
 	public void formatterCalledCorrectlyWhenFileBuilderIsClose() {
 		rerunFileBuilder.close();
 		assertThat(fakeRerunFormatter.getDoneInvocationCount()).isEqualTo(1);
 		assertThat(fakeRerunFormatter.getCloseInvocationCount()).isEqualTo(1);
 	}
-	
+
 	private RuntimeConfiguration getRuntimeConfiguration(List<String> featureParsingArguments) {
 		return new RuntimeConfiguration(0, null, featureParsingArguments, null, null, false, null, false);
 	}

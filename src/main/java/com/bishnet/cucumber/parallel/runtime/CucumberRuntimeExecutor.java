@@ -28,23 +28,22 @@ public class CucumberRuntimeExecutor {
 		this.rerunFiles = rerunFiles;
 		this.runtimeConfiguration = runtimeConfiguration;
 	}
-	
+
 	public List<Path> getHtmlReports() {
 		return htmlReports;
 	}
-	
+
 	public List<Path> getJsonReports() {
 		return jsonReports;
 	}
 
 	public byte run() throws InterruptedException, IOException {
 		byte result = 0;
-		ExecutorService executor = Executors.newFixedThreadPool(rerunFiles
-				.size());
+		ExecutorService executor = Executors.newFixedThreadPool(rerunFiles.size());
 		List<CucumberRuntimeCallable> runtimes = new ArrayList<CucumberRuntimeCallable>();
 		for (Path rerunFile : rerunFiles) {
-			CucumberRuntimeCallable runtimeCallable = new CucumberRuntimeCallable(
-					buildCallableRuntimeArgs(rerunFile), runtimeFactory);
+			CucumberRuntimeCallable runtimeCallable = new CucumberRuntimeCallable(buildCallableRuntimeArgs(rerunFile),
+					runtimeFactory);
 			runtimes.add(runtimeCallable);
 		}
 		List<Future<Byte>> futures = executor.invokeAll(runtimes);

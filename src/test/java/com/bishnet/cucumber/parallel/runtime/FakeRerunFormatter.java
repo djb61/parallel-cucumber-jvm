@@ -50,8 +50,7 @@ public class FakeRerunFormatter implements Formatter, Reporter {
 	}
 
 	@Override
-	public void syntaxError(String state, String event,
-			List<String> legalEvents, String uri, Integer line) {
+	public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
 	}
 
 	@Override
@@ -112,23 +111,23 @@ public class FakeRerunFormatter implements Formatter, Reporter {
 	public String getUri() {
 		return uri;
 	}
-	
+
 	public int getStartOfLifeCycleInvocationCount() {
 		return startOfLifecycleCount;
 	}
-	
+
 	public int getEndOfLifeCycleInvocationCount() {
 		return endOfLifecycleCount;
 	}
-	
+
 	public Result getResult() {
 		return result;
 	}
-	
+
 	public int getUriInvocationCount() {
 		return uriCount;
 	}
-	
+
 	public int getDoneInvocationCount() {
 		return doneCount;
 	}
@@ -136,7 +135,7 @@ public class FakeRerunFormatter implements Formatter, Reporter {
 	public int getCloseInvocationCount() {
 		return closeCount;
 	}
-	
+
 	public int getScenarioInvocationCount() {
 		return scenarioCount;
 	}

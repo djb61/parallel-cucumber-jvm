@@ -18,25 +18,25 @@ public class FeatureSplitter {
 
 	private RuntimeConfiguration runtimeConfiguration;
 	private List<CucumberFeature> features;
-	
+
 	public FeatureSplitter(RuntimeConfiguration runtimeConfiguration, List<CucumberFeature> features) {
 		this.runtimeConfiguration = runtimeConfiguration;
 		this.features = features;
 	}
-	
+
 	public List<Path> splitFeaturesIntoRerunFiles() throws IOException {
 		List<Path> rerunPaths = new ArrayList<Path>();
 		int featuresPerThread = features.size() / runtimeConfiguration.numberOfThreads;
 		if (features.size() % runtimeConfiguration.numberOfThreads > 0)
 			featuresPerThread = featuresPerThread + 1;
 		List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(features, featuresPerThread);
-		
+
 		for (List<CucumberFeature> threadFeatures : partitionedFeatures) {
 			rerunPaths.add(createSingleRerunFile(threadFeatures));
 		}
 		return rerunPaths;
 	}
-	
+
 	private Path createSingleRerunFile(List<CucumberFeature> rerunFeatures) throws IOException {
 		Path rerunPath = Files.createTempFile("parallelCukes", ".rerun");
 		rerunPath.toFile().deleteOnExit();

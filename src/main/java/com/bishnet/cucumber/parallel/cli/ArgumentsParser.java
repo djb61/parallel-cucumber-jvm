@@ -69,9 +69,10 @@ public class ArgumentsParser {
 		fullFeatureParsingArguments.addAll(cucumberArgs);
 		fullFeatureParsingArguments.addAll(featureParseOnlyArgs);
 		fullFeatureParsingArguments.addAll(featurePaths);
-		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(numberOfThreads, Collections.unmodifiableList(cucumberArgs),
-				Collections.unmodifiableList(fullFeatureParsingArguments), Collections.unmodifiableList(featurePaths), htmlReportPath, htmlReportRequired,
-				jsonReportPath, jsonReportRequired);
+		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(numberOfThreads,
+				Collections.unmodifiableList(cucumberArgs), Collections.unmodifiableList(fullFeatureParsingArguments),
+				Collections.unmodifiableList(featurePaths), htmlReportPath, htmlReportRequired, jsonReportPath,
+				jsonReportRequired);
 		return runtimeConfiguration;
 	}
 }

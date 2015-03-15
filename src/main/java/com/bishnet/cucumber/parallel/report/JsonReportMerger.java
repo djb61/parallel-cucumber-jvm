@@ -30,17 +30,17 @@ public class JsonReportMerger {
 		}
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(mergedReport.toFile()))) {
-			Gson gson = new GsonBuilder()
-					.registerTypeAdapter(Double.class,
-							new JsonDoubleSerializer()).setPrettyPrinting().create();
+			Gson gson = new GsonBuilder().registerTypeAdapter(Double.class, new JsonDoubleSerializer()).setPrettyPrinting()
+					.create();
 			bw.write(gson.toJson(features));
 			bw.close();
 		}
 	}
-	
-	private List<Map<String,Object>> readSingleReport(Path reportFile) throws IOException {
+
+	private List<Map<String, Object>> readSingleReport(Path reportFile) throws IOException {
 		try (BufferedReader br = new BufferedReader(new FileReader(reportFile.toFile()))) {
-			Type listType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+			Type listType = new TypeToken<List<Map<String, Object>>>() {
+			}.getType();
 			return new Gson().fromJson(br, listType);
 		}
 	}

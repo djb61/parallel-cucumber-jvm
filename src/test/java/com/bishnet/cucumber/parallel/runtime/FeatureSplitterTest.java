@@ -23,7 +23,7 @@ public class FeatureSplitterTest {
 		List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
 		assertThat(rerunFiles.size()).isEqualTo(1);
 	}
-	
+
 	@Test
 	public void whenPassedARequestForTwoThreadsShouldReturnTwoRerunFiles() throws IOException {
 		List<String> arguments = new ArrayList<String>();
@@ -34,7 +34,7 @@ public class FeatureSplitterTest {
 		List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
 		assertThat(rerunFiles.size()).isEqualTo(2);
 	}
-	
+
 	@Test
 	public void whenPassedARequestForMoreThreadsThanFeaturesShouldReturnRerunFilesEqualToFeatureCount() throws IOException {
 		List<String> arguments = new ArrayList<String>();
@@ -46,7 +46,7 @@ public class FeatureSplitterTest {
 		List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
 		assertThat(rerunFiles.size()).isEqualTo(features.size());
 	}
-	
+
 	private RuntimeConfiguration getRuntimeConfiguration(List<String> featureParsingArguments, int numberOfThreads) {
 		return new RuntimeConfiguration(numberOfThreads, null, featureParsingArguments, null, null, false, null, false);
 	}

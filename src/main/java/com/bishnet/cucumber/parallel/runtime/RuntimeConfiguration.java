@@ -13,8 +13,10 @@ public class RuntimeConfiguration {
 	public final Path jsonReportPath;
 	public final boolean htmlReportRequired;
 	public final boolean jsonReportRequired;
-	
-	public RuntimeConfiguration(int numberOfThreads, List<String> cucumberPassThroughArguments, List<String> featureParsingArguments, List<String> featurePaths, Path htmlReportPath, boolean htmlReportRequired, Path jsonReportPath, boolean jsonReportRequired) {
+
+	public RuntimeConfiguration(int numberOfThreads, List<String> cucumberPassThroughArguments,
+			List<String> featureParsingArguments, List<String> featurePaths, Path htmlReportPath, boolean htmlReportRequired,
+			Path jsonReportPath, boolean jsonReportRequired) {
 		this.numberOfThreads = numberOfThreads;
 		this.cucumberPassthroughArguments = cucumberPassThroughArguments;
 		this.featureParsingArguments = featureParsingArguments;

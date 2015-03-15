@@ -19,11 +19,11 @@ public class HtmlReportMerger {
 	private static final String IMAGE_PATTERN = "*.png";
 	private static final String REPORT_JS = "report.js";
 	private List<Path> reportDirs;
-	
+
 	public HtmlReportMerger(List<Path> reportDirs) {
 		this.reportDirs = reportDirs;
 	}
-	
+
 	public void merge(Path mergedReport) throws IOException {
 		Files.createDirectories(mergedReport);
 		boolean firstReport = true;
@@ -35,15 +35,16 @@ public class HtmlReportMerger {
 			firstReport = false;
 		}
 	}
-	
-	private void copyImagesAndJavaScriptWithImageRename(Path reportDir, Path targetDir, boolean overwriteReport) throws IOException {
+
+	private void copyImagesAndJavaScriptWithImageRename(Path reportDir, Path targetDir, boolean overwriteReport)
+			throws IOException {
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(reportDir, IMAGE_PATTERN)) {
 			List<String> reportJs = Files.readAllLines(reportDir.resolve(REPORT_JS), StandardCharsets.UTF_8);
 			for (Path embeddedImage : dirStream) {
 				String uniqueName = UUID.randomUUID().toString() + ".png";
 				Files.copy(embeddedImage, targetDir.resolve(uniqueName));
 				ListIterator<String> listIterator = reportJs.listIterator();
-				while(listIterator.hasNext()) {
+				while (listIterator.hasNext()) {
 					listIterator.set(listIterator.next().replace(embeddedImage.getFileName().toString(), uniqueName));
 				}
 			}
@@ -55,9 +56,10 @@ public class HtmlReportMerger {
 			Files.write(targetDir.resolve(REPORT_JS), reportJs, StandardCharsets.UTF_8, copyOptions);
 		}
 	}
-	
+
 	private void copyResourceFiles(Path sourceDir, Path targetDir) throws IOException {
-		PathMatcher reportAndImageMatcher = FileSystems.getDefault().getPathMatcher("glob:{" + REPORT_JS +"," + IMAGE_PATTERN +"}");
+		PathMatcher reportAndImageMatcher = FileSystems.getDefault().getPathMatcher(
+				"glob:{" + REPORT_JS + "," + IMAGE_PATTERN + "}");
 		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(sourceDir)) {
 			for (Path resourceFile : dirStream)
 				if (!reportAndImageMatcher.matches(resourceFile.getFileName()))

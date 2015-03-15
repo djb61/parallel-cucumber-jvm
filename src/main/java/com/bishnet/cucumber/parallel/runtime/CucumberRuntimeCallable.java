@@ -17,8 +17,8 @@ public class CucumberRuntimeCallable implements Callable<Byte> {
 
 	@Override
 	public Byte call() throws Exception {
-        Runtime runtime = runtimeFactory.getRuntime(arguments);
-        runtime.run();
+		Runtime runtime = runtimeFactory.getRuntime(arguments);
+		runtime.run();
 		return runtime.exitStatus();
 	}
 

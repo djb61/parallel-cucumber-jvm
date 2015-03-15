@@ -14,7 +14,7 @@ public class JsonDoubleSerializerTest {
 		JsonPrimitive jsonPrimitive = (JsonPrimitive) jsonDoubleSerializer.serialize(sourceValue, null, null);
 		assertThat(jsonPrimitive.getAsNumber().getClass()).isEqualTo(Double.class);
 	}
-	
+
 	@Test
 	public void doubleWithoutFractionalComponentShouldBeSerializedAsLong() {
 		double sourceValue = 2;

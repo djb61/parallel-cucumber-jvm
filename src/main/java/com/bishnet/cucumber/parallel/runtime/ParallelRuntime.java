@@ -20,15 +20,15 @@ public class ParallelRuntime {
 	public ParallelRuntime(List<String> arguments) {
 		this(arguments, Thread.currentThread().getContextClassLoader());
 	}
-	
+
 	public ParallelRuntime(List<String> arguments, ClassLoader cucumberClassLoader) {
 		this(arguments, cucumberClassLoader, null);
 	}
-	
+
 	public ParallelRuntime(List<String> arguments, CucumberBackendFactory cucumberBackendFactory) {
 		this(arguments, Thread.currentThread().getContextClassLoader(), cucumberBackendFactory);
 	}
-	
+
 	public ParallelRuntime(List<String> arguments, ClassLoader cucumberClassLoader, CucumberBackendFactory cucumberBackendFactory) {
 		this.cucumberClassLoader = cucumberClassLoader;
 		this.cucumberBackendFactory = cucumberBackendFactory;
@@ -60,7 +60,7 @@ public class ParallelRuntime {
 
 	private byte runFeatures(List<Path> rerunFiles) throws InterruptedException, IOException {
 		CucumberRuntimeFactory runtimeFactory = null;
-		if (cucumberBackendFactory == null) 
+		if (cucumberBackendFactory == null)
 			runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberClassLoader);
 		else
 			runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, cucumberClassLoader);
