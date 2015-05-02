@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,9 @@ public class JsonReportMerger {
 			features.addAll(readSingleReport(reportFile));
 		}
 
+		Path reportDirectory = mergedReport.getParent();
+		if (reportDirectory != null)
+			Files.createDirectories(reportDirectory);
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(mergedReport.toFile()))) {
 			Gson gson = new GsonBuilder().registerTypeAdapter(Double.class, new JsonDoubleSerializer()).setPrettyPrinting()
 					.create();
