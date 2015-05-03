@@ -2,6 +2,7 @@
 .classpath
 .project
 .settings
+.CHANGELOG.md.html
 .README.md.html
 /build
 /bin
