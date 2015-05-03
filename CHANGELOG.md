@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.1 (2015-05-03)
+=====================
+* Build artifacts to target Java 7 not Java 8
+
 0.1.0 (2015-05-03)
 =====================
 * Initial Release
