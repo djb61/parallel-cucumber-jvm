@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections4.ListUtils;
+import com.bishnet.cucumber.parallel.util.ListUtils;
 
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.CucumberFeature;
@@ -26,10 +26,7 @@ public class FeatureSplitter {
 
 	public List<Path> splitFeaturesIntoRerunFiles() throws IOException {
 		List<Path> rerunPaths = new ArrayList<Path>();
-		int featuresPerThread = features.size() / runtimeConfiguration.numberOfThreads;
-		if (features.size() % runtimeConfiguration.numberOfThreads > 0)
-			featuresPerThread = featuresPerThread + 1;
-		List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(features, featuresPerThread);
+		List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(features, runtimeConfiguration.numberOfThreads);
 
 		for (List<CucumberFeature> threadFeatures : partitionedFeatures) {
 			rerunPaths.add(createSingleRerunFile(threadFeatures));
