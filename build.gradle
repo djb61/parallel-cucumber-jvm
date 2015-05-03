@@ -1,12 +1,11 @@
 plugins {
-  id 'java'
-  id 'eclipse'
+	id 'java'
+	id 'eclipse'
+	id 'maven-publish'
+	id 'com.jfrog.bintray' version '1.1'
 }
 
-sourceCompatibility = 1.7
-version = 0.1
-
-repositories {
+repositories { 
 	jcenter()
 }
 
@@ -18,6 +17,47 @@ dependencies {
 	compile 'info.cukes:cucumber-core:1.2.2'
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives sourcesJar
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			artifact sourcesJar
+		}
+	}
+}
+
+bintray {
+	publications = ['mavenJava']
+	dryRun = false
+	publish = true
+
+	pkg {
+		user = bintrayUser
+		key = bintrayKey
+		repo = 'maven'
+		name = 'parallel-cucumber-jvm'
+		desc = 'Parallel feature execution with Cucumber-JVM'
+		websiteUrl = 'https://github.com/djb61/parallel-cucumber-jvm'
+		issueTrackerUrl = 'https://github.com/djb61/parallel-cucumber-jvm/issues'
+		vcsUrl = 'https://github.com/djb61/parallel-cucumber-jvm.git'
+		licenses = ['MIT']
+		labels = ['cucumber']
+		publicDownloadNumbers = true
+		version {
+			name = project.version
+		}
+	}
+}
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+	gradleVersion = '2.3'
 }
