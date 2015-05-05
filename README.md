@@ -2,6 +2,14 @@
 # Parallel Cucumber JVM
 This is a wrapper around [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) to allow parallel execution of tests at a feature level.
 
+## Maven Artifact
+Binaries are available in [jCenter](https://bintray.com/bintray/jcenter?filterByPkgName=parallel-cucumber-jvm)
+
+[ ![Download](https://api.bintray.com/packages/djb61/maven/parallel-cucumber-jvm/images/download.svg) ](https://bintray.com/djb61/maven/parallel-cucumber-jvm/_latestVersion)
+```
+groupId: com.bishnet artifactId: parallel-cucumber-jvm 
+```
+
 ## How to use it
 To start a CLI test run use the main method in this class
 ``` java
