@@ -75,6 +75,28 @@ public class ArgumentsParserTest {
 	}
 
 	@Test
+	public void finalReportPathIsParsedFromHtmlPluginArgumentsWhenAbsoluteWindowsPathIsProvided() {
+		String reportPath = "c:\\some\\path\\myreport";
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("--plugin");
+		reportArgsList.add("html:" + reportPath);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(reportPath);
+	}
+
+	@Test
+	public void finalReportPathIsParsedFromJsonPluginArgumentsWhenAbsoluteWindowsPathIsProvided() {
+		String reportPath = "c:\\some\\path\\myreport.json";
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("--plugin");
+		reportArgsList.add("json:" + reportPath);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(reportPath);
+	}
+
+	@Test
 	public void pluginArgumentWhichIsNotJsonOrHtmlShouldBePassedThroughToResultingCucumberArgsList() {
 		List<String> pluginArgsList = new ArrayList<String>();
 		pluginArgsList.add("--plugin");

@@ -33,7 +33,7 @@ public class ArgumentsParser {
 				numberOfThreads = Integer.parseInt(parseArguments.remove(0));
 			} else if (arg.equals("--plugin") || arg.equals("-p") || arg.equals("--format") || arg.equals("-f")) {
 				String pluginValue = parseArguments.remove(0);
-				String[] pluginArgsArray = pluginValue.split(":");
+				String[] pluginArgsArray = pluginValue.split(":", 2);
 				if (pluginArgsArray[0].equals("json")) {
 					jsonReportRequired = true;
 					jsonReportPath = Paths.get(pluginArgsArray[1]);
