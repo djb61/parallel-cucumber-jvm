@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.2 (2015-05-07)
+=====================
+* Fix an issue with absolute windows paths as the HTML/JSON report path argument.
+
 0.1.1 (2015-05-03)
 =====================
 * Build artifacts to target Java 7 not Java 8
