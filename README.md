@@ -7,7 +7,8 @@ Binaries are available in [jCenter](https://bintray.com/bintray/jcenter?filterBy
 
 [ ![Download](https://api.bintray.com/packages/djb61/maven/parallel-cucumber-jvm/images/download.svg) ](https://bintray.com/djb61/maven/parallel-cucumber-jvm/_latestVersion)
 ```
-groupId: com.bishnet artifactId: parallel-cucumber-jvm 
+groupId:    com.bishnet
+artifactId: parallel-cucumber-jvm 
 ```
 
 ## How to use it
