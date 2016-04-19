@@ -2,6 +2,7 @@ package com.bishnet.cucumber.parallel.cli;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import org.junit.Test;
 import com.bishnet.cucumber.parallel.runtime.RuntimeConfiguration;
 
 public class ArgumentsParserTest {
+
+	private static final String REPORT_MYREPORT_JSON = "report" + File.pathSeparatorChar + "myreport.json";
+	private static final String REPORT_MYREPORT = "report" + File.pathSeparatorChar + "myreport";
 
 	@Test
 	public void numberOfThreadsShouldMatchNumberOfProcessorsWhenNotSpecified() {
@@ -32,46 +36,42 @@ public class ArgumentsParserTest {
 
 	@Test
 	public void finalReportPathIsParsedFromJsonPluginArgument() {
-		String reportPath = "report/myreport.json";
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("--plugin");
-		reportArgsList.add("json:" + reportPath);
+		reportArgsList.add("json:" + REPORT_MYREPORT_JSON);
 		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(reportPath);
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(REPORT_MYREPORT_JSON);
 	}
 
 	@Test
 	public void finalReportPathIsParsedFromJsonPluginArgumentUsingShortForm() {
-		String reportPath = "report/myreport.json";
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("-p");
-		reportArgsList.add("json:" + reportPath);
+		reportArgsList.add("json:" + REPORT_MYREPORT_JSON);
 		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(reportPath);
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).isEqualTo(REPORT_MYREPORT_JSON);
 	}
 
 	@Test
 	public void finalReportPathIsParsedFromHtmlPluginArgument() {
-		String reportPath = "report/myreport";
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("--plugin");
-		reportArgsList.add("html:" + reportPath);
+		reportArgsList.add("html:" + REPORT_MYREPORT);
 		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(reportPath);
+		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(REPORT_MYREPORT);
 	}
 
 	@Test
 	public void finalReportPathIsParsedFromHtmlPluginArgumentUsingShortForm() {
-		String reportPath = "report/myreport";
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("-p");
-		reportArgsList.add("html:" + reportPath);
+		reportArgsList.add("html:" + REPORT_MYREPORT);
 		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(reportPath);
+		assertThat(runtimeConfiguration.htmlReportPath.toString()).isEqualTo(REPORT_MYREPORT);
 	}
 
 	@Test
