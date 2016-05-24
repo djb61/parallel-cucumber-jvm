@@ -22,6 +22,20 @@ A single additional argument is supported to control the level of parallelism.
 --num-threads <n> # Defaults to the number of available cores if not specified
 ```
 
+## Features
+
+##### Thread timeline report
+
+Report for simplify troubleshooting of multithreaded tests
+
+![Report example](https://i.imgsafe.org/d9e1b0d.png)
+
+Usage
+
+``` java
+--plugin threadReport:threadReportDir/
+```
+
 ## Limitations
 1. CLI is the only supported execution mechanism.
 2. Specifying a rerun output formatter is not safe as all threads will attempt to update the same file. Specifying a rerun file as the input of scenarios to run is fine.
