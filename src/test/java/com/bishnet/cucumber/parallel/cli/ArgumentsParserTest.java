@@ -14,6 +14,7 @@ public class ArgumentsParserTest {
 
 	private static final String REPORT_MYREPORT_JSON = "report" + File.pathSeparatorChar + "myreport.json";
 	private static final String REPORT_MYREPORT = "report" + File.pathSeparatorChar + "myreport";
+	private static final String REPORT_THREADREPORT = "report" + File.pathSeparatorChar + "threadreportdir";
 
 	@Test
 	public void numberOfThreadsShouldMatchNumberOfProcessorsWhenNotSpecified() {
@@ -262,4 +263,35 @@ public class ArgumentsParserTest {
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.jsonReportRequired).isTrue();
 	}
+
+	@Test
+	public void isThreadReportRequiredShouldBeTrueIfJsonArgumentWasPassed() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--plugin");
+		arguments.add("threadReport:threadReportFolder");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.threadTimelineReportRequired).isTrue();
+	}
+
+	@Test
+	public void finalReportPathIsParsedFromThreadReportPluginArgument() {
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("--plugin");
+		reportArgsList.add("threadReport:" + REPORT_THREADREPORT);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.threadTimelineReportPath.toString()).isEqualTo(REPORT_THREADREPORT);
+	}
+
+	@Test
+	public void finalReportPathIsParsedFromThreadReportPluginArgumentUsingShortForm() {
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("-p");
+		reportArgsList.add("threadReport:" + REPORT_THREADREPORT);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.threadTimelineReportPath.toString()).isEqualTo(REPORT_THREADREPORT);
+	}
+
 }

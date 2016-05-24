@@ -7,6 +7,8 @@ import java.util.List;
 import com.bishnet.cucumber.parallel.cli.ArgumentsParser;
 import com.bishnet.cucumber.parallel.report.HtmlReportMerger;
 import com.bishnet.cucumber.parallel.report.JsonReportMerger;
+import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
+import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionReporter;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
@@ -59,13 +61,19 @@ public class ParallelRuntime {
 	}
 
 	private byte runFeatures(List<Path> rerunFiles) throws InterruptedException, IOException {
+
 		CucumberRuntimeFactory runtimeFactory = null;
-		if (cucumberBackendFactory == null)
-			runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberClassLoader);
-		else
-			runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, cucumberClassLoader);
+		ThreadExecutionRecorder threadExecutionRecorder = null;
+
+		if (runtimeConfiguration.threadTimelineReportRequired)
+			threadExecutionRecorder = new ThreadExecutionRecorder();
+
+		runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, cucumberClassLoader, threadExecutionRecorder);
+
 		CucumberRuntimeExecutor executor = new CucumberRuntimeExecutor(runtimeFactory, rerunFiles, runtimeConfiguration);
+
 		byte result = executor.run();
+
 		if (runtimeConfiguration.jsonReportRequired) {
 			JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
 			merger.merge(runtimeConfiguration.jsonReportPath);
@@ -74,6 +82,12 @@ public class ParallelRuntime {
 			HtmlReportMerger merger = new HtmlReportMerger(executor.getHtmlReports());
 			merger.merge(runtimeConfiguration.htmlReportPath);
 		}
+		if (runtimeConfiguration.threadTimelineReportRequired) {
+			ThreadExecutionReporter threadExecutionReporter = new ThreadExecutionReporter();
+			threadExecutionReporter.writeReport(threadExecutionRecorder.getRecordedData(), runtimeConfiguration.threadTimelineReportPath);
+		}
+		
+		
 		return result;
 	}
 }

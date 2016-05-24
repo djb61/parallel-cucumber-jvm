@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Cucumber thread timeline report</title>
+
+<style type="text/css">
+body, html {
+	font-family: sans-serif;
+}
+
+.vis-custom-time {
+	cursor: initial !important;
+}
+
+.vis-custom-time.navigateTime {
+	background-color: #DA2323;
+}
+
+.controls {
+	width: 50%;
+	float: left;
+}
+
+.quick-navigation {
+	width: 50%;
+	float: right;
+}
+</style>
+
+<script src="./vis.min.js"></script>
+<script src="./jquery-2.2.3.min.js"></script>
+<script src="./chosen.jquery.min.js"></script>
+<script src="./moment.min.js"></script>
+<link href="./vis.min.css" rel="stylesheet" type="text/css" />
+<link href="./chosen.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+	<div class="title">
+		<h2>Cucumber thread timeline report</h2>
+	</div>
+
+	<div id="visualization"></div>
+
+	<hr />
+
+	<div class="controls">
+		<h3>Controls</h3>
+		<input type="button" id="zoomIn" value="Zoom in" /> <input
+			type="button" id="zoomOut" value="Zoom out" /> <input type="button"
+			id="moveLeft" value="Move left" /> <input type="button"
+			id="moveRight" value="Move right" /> <input type="button"
+			id="fitall" value="Fit all" />
+	</div>
+
+	<div class="quick-navigation">
+		<h3>Quick navigation</h3>
+		<p>
+			<b>Navigate to feature: </b><select
+				data-placeholder="Choose a feature name..." id="featureSelect"><option /></select><br />
+		</p>
+		<p>
+			<b>Navigate to time:</b> <input id="navigateToTimeInput" /><input
+				type="button" id="navigateToTime" value="Go" />
+		</p>
+	</div>
+
+	<script type="text/javascript">
+         
+	   var items = new vis.DataSet(${DATA});
+
+	   var container = document.getElementById('visualization');
+	   var dateFormat = "YYYY-MM-DD HH:mm:ss";
+	   var customTimeSelector = ".vis-custom-time";
+
+	   var groups = [];
+
+	   var startTime = new Date(items.min("start").start);
+	   var endTime = new Date(items.max("end").end);
+
+	   var options = {
+	       stack: false,
+	       min: startTime,
+	       max: endTime
+	   };
+
+	   prepareContent();
+	   buildThreadGroups();
+
+	   var timeline = new vis.Timeline(container, items, groups, options);
+
+	   bindControlElements();
+	   buildFeatureSelector();
+	   buildNavigarionByTime();
+	   bindElementClickAction();
+
+	   function bindElementClickAction() {
+	       timeline.on('select', function(properties) {
+	           itemSelected(properties.items);
+	       });
+	   }
+
+	   function buildNavigarionByTime() {
+	       $('#navigateToTime').click(function() {
+	           var paddingInSeconds = 15;
+	           var time = moment($("#navigateToTimeInput").val());
+
+	           if (!time.isValid()) {
+	               alert("Time format is not valid. Valid format is " + dateFormat);
+	               return;
+	           }
+
+	           if (!time.isBetween(startTime, endTime)) {
+	               alert("Time should be between: (" + moment(startTime).format(dateFormat) + " - " + moment(endTime).format(dateFormat) + ")");
+	               return;
+	           }
+
+	           var customTimeId = "navigateTime";
+
+	           if ($(customTimeSelector + "." + customTimeId).length)
+	               timeline.removeCustomTime(customTimeId);
+
+	           timeline.addCustomTime(time, customTimeId);
+
+	           var windowStart = time.clone().subtract(paddingInSeconds, 's');
+	           var windowEnd = time.clone().add(paddingInSeconds, 's');
+
+	           timeline.setWindow(windowStart, windowEnd);
+
+	       });
+
+	       $("#navigateToTimeInput").val(moment(startTime).add(1, 's').format(dateFormat));
+
+	   }
+
+
+	   function buildFeatureSelector() {
+	       var features = items.distinct("featurePath");
+	       features.sort();
+
+	       features.forEach(function(entry) {
+	           $('#featureSelect').append($("<option></option>")
+	               .attr("value", entry)
+	               .text(getFeatureNameByPath(entry)));
+
+	       });
+
+	       $('#featureSelect').on('change', function() {
+
+	           var selectedFeatureName = this.value;
+
+	           var selectedItems = new vis.DataSet(items.get({
+	               filter: function(item) {
+	                   return (item.featurePath == selectedFeatureName);
+	               }
+	           }));
+
+	           var ids = selectedItems.distinct("id");
+	           itemSelected(ids);
+
+	       });
+
+	       $("#featureSelect").chosen();
+
+	   }
+
+	   function buildThreadGroups() {
+	       items.distinct("group").forEach(function(entry) {
+	           groups.push({
+	               id: entry,
+	               content: "Thread " + entry
+	           });
+	       });
+	   }
+
+
+	   function prepareContent() {
+	       items.forEach(function(value) {
+
+	           var date = value.content.replace(/-/g, " ");
+	           date = date.replace(/\s+/g, ' ').trim();
+
+	           date = date.split(";");
+
+	           var featureName = date[0];
+	           var scenarioName = date[1];
+
+	           value.featureName = featureName;
+	           value.content = "<b>Feature: </b>" + featureName + "<br><b>Scenario: </b>" + scenarioName;
+	           value.title = "Feature: " + featureName + "\r\nScenario: " + scenarioName;
+
+	           items.update(value);
+
+	       });
+	   }
+
+	   function itemSelected(ids) {
+
+	       var selectedItems = new vis.DataSet(items.get(ids));
+	       var startId = "start";
+	       var endId = "end";
+
+	       var selectedPeriodStart = selectedItems.min("start").start;
+	       var selectedPeriodEnd = selectedItems.max("end").end;
+	       var selectedPeriodDuration = selectedPeriodEnd - selectedPeriodStart;
+	       var zoomPadding = Math.ceil(selectedPeriodDuration * 0.05);
+
+	       timeline.setSelection(ids);
+	       timeline.focus(ids);
+	       timeline.setWindow(selectedPeriodStart - zoomPadding, selectedPeriodEnd + zoomPadding);
+
+	       if ($(customTimeSelector + "." + startId).length)
+	           timeline.removeCustomTime(startId);
+
+	       if ($(customTimeSelector + "." + endId).length)
+	           timeline.removeCustomTime(endId);
+
+	       timeline.addCustomTime(selectedPeriodStart, startId);
+	       timeline.addCustomTime(selectedPeriodEnd, endId);
+
+	   }
+	   
+	   function getFeatureNameByPath(featurePath){
+		   
+		   var selectedItems = new vis.DataSet(items.get({
+               filter: function(item) {
+                   return (item.featurePath == featurePath);
+               }
+           }));
+		   
+		   return selectedItems.get()[0].featureName;
+		   
+	   }
+
+	   function move(percentage) {
+	       var range = timeline.getWindow();
+	       var interval = range.end - range.start;
+
+	       timeline.setWindow({
+	           start: range.start.valueOf() - interval * percentage,
+	           end: range.end.valueOf() - interval * percentage
+	       });
+	   }
+
+	   function zoom(percentage) {
+	       var range = timeline.getWindow();
+	       var interval = range.end - range.start;
+
+	       timeline.setWindow({
+	           start: range.start.valueOf() - interval * percentage,
+	           end: range.end.valueOf() + interval * percentage
+	       });
+	   }
+
+	   function bindControlElements() {
+	       document.getElementById('zoomIn').onclick = function() {
+	           zoom(-0.2);
+	       };
+	       document.getElementById('zoomOut').onclick = function() {
+	           zoom(0.2);
+	       };
+	       document.getElementById('moveLeft').onclick = function() {
+	           move(0.2);
+	       };
+	       document.getElementById('moveRight').onclick = function() {
+	           move(-0.2);
+	       };
+	       document.getElementById('fitall').onclick = function() {
+	           timeline.setWindow(startTime, endTime);
+	       };
+	   }
+         
+      </script>
+</body>
+</html>

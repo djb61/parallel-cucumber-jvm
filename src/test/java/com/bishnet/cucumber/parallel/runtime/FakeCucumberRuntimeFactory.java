@@ -1,13 +1,14 @@
 package com.bishnet.cucumber.parallel.runtime;
 
-import java.util.List;
-
+import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+
+import java.util.List;
 
 public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 
@@ -16,7 +17,7 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 	private int invocationCount;
 
 	public FakeCucumberRuntimeFactory(byte[] perInvocationExitCodes, boolean[] perInvocationShouldThrowException) {
-		super(new RuntimeConfiguration(0, null, null, null, null, false, null, false), Thread.currentThread()
+		super(new RuntimeConfiguration(0, null, null, null, null, false, null, false, null, false), Thread.currentThread()
 				.getContextClassLoader());
 		this.perInvocationExitCodes = perInvocationExitCodes;
 		this.perInvocationShouldThrowException = perInvocationShouldThrowException;
@@ -31,6 +32,7 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 		byte exitCode = perInvocationExitCodes[invocationCount % perInvocationExitCodes.length];
 		boolean shouldThrowException = perInvocationShouldThrowException[invocationCount % perInvocationExitCodes.length];
 		invocationCount++;
-		return new FakeCucumberRuntime(exitCode, shouldThrowException, resourceLoader, classFinder, classLoader, runtimeOptions);
+		ThreadExecutionRecorder threadExecutionRecorder = new ThreadExecutionRecorder();
+		return new FakeCucumberRuntime(exitCode, shouldThrowException, resourceLoader, classFinder, classLoader, runtimeOptions, threadExecutionRecorder);
 	}
 }
