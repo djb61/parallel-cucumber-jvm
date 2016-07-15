@@ -28,7 +28,7 @@ A single additional argument is supported to control the level of parallelism.
 
 Report for simplify troubleshooting of multithreaded tests
 
-![Report example](https://i.imgsafe.org/d9e1b0d.png)
+![Report example](http://i.imgur.com/xfJfZAx.png)
 
 Usage
 
