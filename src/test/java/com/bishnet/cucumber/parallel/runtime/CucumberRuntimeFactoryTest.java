@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
+import cucumber.runtime.Runtime;
 import org.junit.Test;
 
 public class CucumberRuntimeFactoryTest {
@@ -52,12 +53,24 @@ public class CucumberRuntimeFactoryTest {
 	}
 
 	@Test
-	public void shouldReturnThreadLoggedRuntime(){
+	public void shouldReturnDefaultRuntime(){
 		List<String> featurePaths = new ArrayList<String>();
 		List<String> cucumberPassthroughArguments = new ArrayList<String>();
 		FakeCucumberBackendFactory cucumberBackendFactory = new FakeCucumberBackendFactory();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
 				null, false, null, false, null, false);
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, Thread
+				.currentThread().getContextClassLoader());
+		assertThat(runtimeFactory.getRuntime(cucumberArguments)).isInstanceOf(Runtime.class);
+	}
+
+	@Test
+	public void shouldReturnThreadLoggedRuntimeWhenReportIsRequired(){
+		List<String> featurePaths = new ArrayList<String>();
+		List<String> cucumberPassthroughArguments = new ArrayList<String>();
+		FakeCucumberBackendFactory cucumberBackendFactory = new FakeCucumberBackendFactory();
+		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
+				null, false, null, false, null, true);
 		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, Thread
 				.currentThread().getContextClassLoader());
 		assertThat(runtimeFactory.getRuntime(cucumberArguments)).isInstanceOf(ThreadLoggedRuntime.class);
