@@ -43,7 +43,7 @@ public class ArgumentsParser {
 				} else if (pluginArgsArray[0].equals("html")) {
 					htmlReportRequired = true;
 					htmlReportPath = Paths.get(pluginArgsArray[1]);
-				} else if (pluginArgsArray[0].equals("threadReport")) {
+				} else if (pluginArgsArray[0].equals("thread-report")) {
 					threadTimelineReportRequired = true;
 					threadTimelineReportPath = Paths.get(pluginArgsArray[1]);
 				} else {

@@ -268,7 +268,7 @@ public class ArgumentsParserTest {
 	public void isThreadReportRequiredShouldBeTrueIfJsonArgumentWasPassed() {
 		List<String> arguments = new ArrayList<String>();
 		arguments.add("--plugin");
-		arguments.add("threadReport:threadReportFolder");
+		arguments.add("thread-report:threadReportFolder");
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.threadTimelineReportRequired).isTrue();
@@ -278,7 +278,7 @@ public class ArgumentsParserTest {
 	public void finalReportPathIsParsedFromThreadReportPluginArgument() {
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("--plugin");
-		reportArgsList.add("threadReport:" + REPORT_THREADREPORT);
+		reportArgsList.add("thread-report:" + REPORT_THREADREPORT);
 		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.threadTimelineReportPath.toString()).isEqualTo(REPORT_THREADREPORT);
@@ -288,7 +288,7 @@ public class ArgumentsParserTest {
 	public void finalReportPathIsParsedFromThreadReportPluginArgumentUsingShortForm() {
 		List<String> reportArgsList = new ArrayList<String>();
 		reportArgsList.add("-p");
-		reportArgsList.add("threadReport:" + REPORT_THREADREPORT);
+		reportArgsList.add("thread-report:" + REPORT_THREADREPORT);
 		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.threadTimelineReportPath.toString()).isEqualTo(REPORT_THREADREPORT);

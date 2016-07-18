@@ -33,7 +33,7 @@ Report for simplify troubleshooting of multithreaded tests
 Usage
 
 ``` java
---plugin threadReport:threadReportDir/
+--plugin thread-report:threadReportDir/
 ```
 
 ## Limitations
