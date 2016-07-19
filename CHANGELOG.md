@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.3 (Unreleased)
+=====================
+* Implement thread timeline report.
+
 0.1.2 (2015-05-07)
 =====================
 * Fix an issue with absolute windows paths as the HTML/JSON report path argument.

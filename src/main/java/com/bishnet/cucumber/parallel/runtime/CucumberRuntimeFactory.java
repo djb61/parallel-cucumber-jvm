@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
+
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
@@ -21,16 +23,23 @@ public class CucumberRuntimeFactory {
 	private RuntimeConfiguration runtimeConfiguration;
 	private CucumberBackendFactory cucumberBackendFactory;
 	private ClassLoader cucumberClassLoader;
+	private ThreadExecutionRecorder threadExecutionRecorder;
 
 	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, ClassLoader cucumberClassLoader) {
 		this(runtimeConfiguration, null, cucumberClassLoader);
 	}
 
 	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory,
-			ClassLoader cucumberClassLoader) {
+								  ClassLoader cucumberClassLoader) {
+		this(runtimeConfiguration, cucumberBackendFactory, cucumberClassLoader, null);
+	}
+
+	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory,
+								  ClassLoader cucumberClassLoader, ThreadExecutionRecorder threadExecutionRecorder) {
 		this.runtimeConfiguration = runtimeConfiguration;
 		this.cucumberBackendFactory = cucumberBackendFactory;
 		this.cucumberClassLoader = cucumberClassLoader;
+		this.threadExecutionRecorder = threadExecutionRecorder;
 	}
 
 	public Runtime getRuntime(List<String> additionalCucumberArguments) {
@@ -38,14 +47,34 @@ public class CucumberRuntimeFactory {
 		runtimeCucumberArguments.addAll(additionalCucumberArguments);
 		RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeCucumberArguments);
 		ResourceLoader resourceLoader = getResourceLoader();
+
 		Runtime runtime = null;
+
+		if (runtimeConfiguration.threadTimelineReportRequired){
+			runtime = createThreadLoggedRuntime(runtimeOptions, resourceLoader);
+		} else {
+			runtime = createDefaultRuntime(runtimeOptions, resourceLoader);
+		}
+
+		return runtime;
+	}
+
+	private Runtime createDefaultRuntime(RuntimeOptions runtimeOptions, ResourceLoader resourceLoader) {
 		if (cucumberBackendFactory == null) {
 			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, cucumberClassLoader);
-			runtime = new Runtime(resourceLoader, classFinder, cucumberClassLoader, runtimeOptions);
+			return new Runtime(resourceLoader, classFinder, cucumberClassLoader, runtimeOptions);
 		} else {
-			runtime = new Runtime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions);
+			return new Runtime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions);
 		}
-		return runtime;
+	}
+
+	private Runtime createThreadLoggedRuntime(RuntimeOptions runtimeOptions, ResourceLoader resourceLoader) {
+		if (cucumberBackendFactory == null) {
+			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, cucumberClassLoader);
+			return new ThreadLoggedRuntime(resourceLoader, classFinder, cucumberClassLoader, runtimeOptions, threadExecutionRecorder);
+		} else {
+			return new ThreadLoggedRuntime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions, threadExecutionRecorder);
+		}
 	}
 
 	private ResourceLoader getResourceLoader() {
