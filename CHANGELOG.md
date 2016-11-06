@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.4 (2016-11-06)
+=====================
+* Switch to requiring Java 8.
+
 0.1.3 (2016-11-06)
 =====================
 * Implement thread timeline report.
