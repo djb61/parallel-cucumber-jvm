@@ -1,7 +1,7 @@
 ChangeLog
 =====================
 
-0.1.3 (Unreleased)
+0.1.3 (2016-11-06)
 =====================
 * Implement thread timeline report.
 
