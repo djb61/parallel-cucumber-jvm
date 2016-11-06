@@ -48,9 +48,9 @@ public class ThreadLoggedRuntime extends Runtime {
 	}
 
 	@Override
-	public void disposeBackendWorlds() {
+	public void disposeBackendWorlds(String scenarioDesignation) {
 		saveTimelineData();
-		super.disposeBackendWorlds();
+		super.disposeBackendWorlds(scenarioDesignation);
 	}
 
 	private void createTimelineData(Scenario gherkinScenario) {

@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'maven-publish'
-	id 'com.jfrog.bintray' version '1.1'
+	id 'com.jfrog.bintray' version '1.7.2'
 }
 
 repositories { 
@@ -11,13 +11,12 @@ repositories {
 
 dependencies {
 	testCompile 'junit:junit:4.12'
-	testCompile 'org.assertj:assertj-core:2.0.0'
-	testCompile 'info.cukes:cucumber-java:1.2.2'
-	testCompile 'org.mockito:mockito-core:1.10.19'
+	testCompile 'org.assertj:assertj-core:3.5.2'
+	testCompile 'info.cukes:cucumber-java:1.2.5'
+	testCompile 'org.mockito:mockito-core:2.2.11'
 
-
-	compile 'info.cukes:cucumber-core:1.2.2'
-	compile 'commons-io:commons-io:2.4'
+	compile 'info.cukes:cucumber-core:1.2.5'
+	compile 'commons-io:commons-io:2.5'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

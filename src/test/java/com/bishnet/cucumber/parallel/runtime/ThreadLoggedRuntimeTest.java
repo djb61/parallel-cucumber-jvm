@@ -79,7 +79,7 @@ public class ThreadLoggedRuntimeTest {
 
 		threadLoggedRuntime.buildBackendWorlds(reporter, tags, scenario);
 		threadLoggedRuntime.runStep(FEATURE_PATH, step, reporter, i18n);
-		threadLoggedRuntime.disposeBackendWorlds();
+		threadLoggedRuntime.disposeBackendWorlds("");
 
 		ArgumentCaptor<ThreadTimelineData> argumentCaptor = ArgumentCaptor.forClass(ThreadTimelineData.class);
 		verify(threadExecutionRecorder).recordEvent(argumentCaptor.capture());
