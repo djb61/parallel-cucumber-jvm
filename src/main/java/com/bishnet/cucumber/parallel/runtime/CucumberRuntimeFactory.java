@@ -6,17 +6,23 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 
+import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Reflections;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+import cucumber.runtime.xstream.LocalizedXStreams;
 
 public class CucumberRuntimeFactory {
 
@@ -60,20 +66,26 @@ public class CucumberRuntimeFactory {
 	}
 
 	private Runtime createDefaultRuntime(RuntimeOptions runtimeOptions, ResourceLoader resourceLoader) {
+		
+		RuntimeGlue runtimeGlue = buildThreadSafeRuntimeGlue();
+		
 		if (cucumberBackendFactory == null) {
 			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, cucumberClassLoader);
-			return new Runtime(resourceLoader, classFinder, cucumberClassLoader, runtimeOptions);
+			return new Runtime(resourceLoader, cucumberClassLoader, loadBackends(resourceLoader, classFinder), runtimeOptions, runtimeGlue);
 		} else {
-			return new Runtime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions);
+			return new Runtime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions, runtimeGlue);
 		}
 	}
 
 	private Runtime createThreadLoggedRuntime(RuntimeOptions runtimeOptions, ResourceLoader resourceLoader) {
+		
+		RuntimeGlue runtimeGlue = buildThreadSafeRuntimeGlue();
+		
 		if (cucumberBackendFactory == null) {
 			ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, cucumberClassLoader);
-			return new ThreadLoggedRuntime(resourceLoader, classFinder, cucumberClassLoader, runtimeOptions, threadExecutionRecorder);
+			return new ThreadLoggedRuntime(resourceLoader, cucumberClassLoader, loadBackends(resourceLoader, classFinder), runtimeOptions, threadExecutionRecorder, runtimeGlue);
 		} else {
-			return new ThreadLoggedRuntime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions, threadExecutionRecorder);
+			return new ThreadLoggedRuntime(resourceLoader, cucumberClassLoader, cucumberBackendFactory.getBackends(), runtimeOptions, threadExecutionRecorder, runtimeGlue);
 		}
 	}
 
@@ -103,4 +115,14 @@ public class CucumberRuntimeFactory {
 		}
 		return fileSystemFeaturePaths;
 	}
+	
+	protected RuntimeGlue buildThreadSafeRuntimeGlue() {
+		UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+		return new ThreadSafeRuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(cucumberClassLoader));
+	}
+	
+	protected Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
+        Reflections reflections = new Reflections(classFinder);
+        return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+    }
 }
