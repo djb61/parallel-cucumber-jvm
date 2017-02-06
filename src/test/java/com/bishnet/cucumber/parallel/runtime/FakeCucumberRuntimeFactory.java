@@ -1,13 +1,17 @@
 package com.bishnet.cucumber.parallel.runtime;
 
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
+
+import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 
+import java.util.Collection;
 import java.util.List;
 
 public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
@@ -33,6 +37,8 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 		boolean shouldThrowException = perInvocationShouldThrowException[invocationCount % perInvocationExitCodes.length];
 		invocationCount++;
 		ThreadExecutionRecorder threadExecutionRecorder = new ThreadExecutionRecorder();
-		return new FakeCucumberRuntime(exitCode, shouldThrowException, resourceLoader, classFinder, classLoader, runtimeOptions, threadExecutionRecorder);
+		Collection<? extends Backend> backends = loadBackends(resourceLoader, classFinder);
+		RuntimeGlue runtimeGlue = buildThreadSafeRuntimeGlue();
+		return new FakeCucumberRuntime(exitCode, shouldThrowException, resourceLoader, classLoader, backends, runtimeOptions, threadExecutionRecorder, runtimeGlue);
 	}
 }

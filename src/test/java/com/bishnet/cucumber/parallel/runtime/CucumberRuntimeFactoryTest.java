@@ -11,18 +11,20 @@ import org.junit.Test;
 public class CucumberRuntimeFactoryTest {
 
 	private List<String> cucumberArguments = new ArrayList<String>();
+	private List<String> cucumberPassthroughArguments = new ArrayList<String>();
+	private FakeCucumberBackendFactory cucumberBackendFactory = new FakeCucumberBackendFactory();
+	private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 	@Test
 	public void shouldReturnRuntimeWhenPassedValidFileSystemPaths() {
 		List<String> featurePaths = new ArrayList<String>();
 		featurePaths.add("/some/absolute/path");
 		featurePaths.add("a/relative/path");
-		List<String> cucumberPassthroughArguments = new ArrayList<String>();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
 				null, false, null, false, null, false);
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, Thread.currentThread()
-				.getContextClassLoader());
-		runtimeFactory.getRuntime(cucumberArguments);
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, classLoader);
+		Runtime runtime = runtimeFactory.getRuntime(cucumberArguments);
+		assertThat(runtime.getGlue()).isInstanceOf(ThreadSafeRuntimeGlue.class);
 	}
 
 	@Test
@@ -31,23 +33,18 @@ public class CucumberRuntimeFactoryTest {
 		featurePaths.add("/some/absolute/path");
 		featurePaths.add("a/relative/path");
 		featurePaths.add("classpath:");
-		List<String> cucumberPassthroughArguments = new ArrayList<String>();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
 				null, false, null, false, null, false);
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, Thread.currentThread()
-				.getContextClassLoader());
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, classLoader);
 		runtimeFactory.getRuntime(cucumberArguments);
 	}
 
 	@Test
 	public void shouldInvokeBackendFactoryIfOneIsProvided() {
 		List<String> featurePaths = new ArrayList<String>();
-		List<String> cucumberPassthroughArguments = new ArrayList<String>();
-		FakeCucumberBackendFactory cucumberBackendFactory = new FakeCucumberBackendFactory();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
 				null, false, null, false, null, false);
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, Thread
-				.currentThread().getContextClassLoader());
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, classLoader);
 		runtimeFactory.getRuntime(cucumberArguments);
 		assertThat(cucumberBackendFactory.wasInvoked()).isTrue();
 	}
@@ -55,25 +52,23 @@ public class CucumberRuntimeFactoryTest {
 	@Test
 	public void shouldReturnDefaultRuntime(){
 		List<String> featurePaths = new ArrayList<String>();
-		List<String> cucumberPassthroughArguments = new ArrayList<String>();
-		FakeCucumberBackendFactory cucumberBackendFactory = new FakeCucumberBackendFactory();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
 				null, false, null, false, null, false);
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, Thread
-				.currentThread().getContextClassLoader());
-		assertThat(runtimeFactory.getRuntime(cucumberArguments)).isInstanceOf(Runtime.class);
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, classLoader);
+		Runtime runtime = runtimeFactory.getRuntime(cucumberArguments);
+		assertThat(runtime).isInstanceOf(Runtime.class);
+		assertThat(runtime.getGlue()).isInstanceOf(ThreadSafeRuntimeGlue.class);
 	}
 
 	@Test
 	public void shouldReturnThreadLoggedRuntimeWhenReportIsRequired(){
 		List<String> featurePaths = new ArrayList<String>();
-		List<String> cucumberPassthroughArguments = new ArrayList<String>();
-		FakeCucumberBackendFactory cucumberBackendFactory = new FakeCucumberBackendFactory();
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
 				null, false, null, false, null, true);
-		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, Thread
-				.currentThread().getContextClassLoader());
-		assertThat(runtimeFactory.getRuntime(cucumberArguments)).isInstanceOf(ThreadLoggedRuntime.class);
+		CucumberRuntimeFactory runtimeFactory = new CucumberRuntimeFactory(runtimeConfiguration, cucumberBackendFactory, classLoader);
+		Runtime runtime = runtimeFactory.getRuntime(cucumberArguments);
+		assertThat(runtime).isInstanceOf(ThreadLoggedRuntime.class);
+		assertThat(runtime.getGlue()).isInstanceOf(ThreadSafeRuntimeGlue.class);
 	}
 
 }

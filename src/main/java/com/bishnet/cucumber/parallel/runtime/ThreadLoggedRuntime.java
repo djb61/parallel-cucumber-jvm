@@ -7,8 +7,8 @@ import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import com.bishnet.cucumber.parallel.report.thread.ThreadTimelineData;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
@@ -22,16 +22,10 @@ public class ThreadLoggedRuntime extends Runtime {
 	private ThreadTimelineData threadTimelineData;
 	private ThreadExecutionRecorder threadExecutionRecorder;
 
-	public ThreadLoggedRuntime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader,
-			RuntimeOptions runtimeOptions, ThreadExecutionRecorder threadExecutionRecorder) {
-		super(resourceLoader, classFinder, classLoader, runtimeOptions);
-		this.threadExecutionRecorder = threadExecutionRecorder;
-	}
-
 	public ThreadLoggedRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
 			Collection<? extends Backend> backends, RuntimeOptions runtimeOptions,
-			ThreadExecutionRecorder threadExecutionRecorder) {
-		super(resourceLoader, classLoader, backends, runtimeOptions);
+			ThreadExecutionRecorder threadExecutionRecorder, RuntimeGlue runtimeGlue) {
+		super(resourceLoader, classLoader, backends, runtimeOptions, runtimeGlue);
 		this.threadExecutionRecorder = threadExecutionRecorder;
 	}
 

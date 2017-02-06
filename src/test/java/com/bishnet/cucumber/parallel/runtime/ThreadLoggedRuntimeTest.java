@@ -3,6 +3,7 @@ package com.bishnet.cucumber.parallel.runtime;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import com.bishnet.cucumber.parallel.report.thread.ThreadTimelineData;
 import cucumber.runtime.Backend;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
@@ -57,6 +58,9 @@ public class ThreadLoggedRuntimeTest {
 	private ThreadExecutionRecorder threadExecutionRecorder;
 
 	@Mock
+	private RuntimeGlue runtimeGlue;
+	
+	@Mock
 	private Step step;
 
 	@Mock
@@ -67,11 +71,10 @@ public class ThreadLoggedRuntimeTest {
 	@Before
 	public void setUp() throws Exception {
 
-		when(i18n.keywords(GIVEN)).thenReturn(Arrays.asList(GIVEN));
 		when(scenario.getId()).thenReturn(SCENARIO_ID);
 
 		List<Backend> backends = Arrays.asList(backend);
-		threadLoggedRuntime = new ThreadLoggedRuntime(resourceLoader, classLoader, backends, runtimeOptions, threadExecutionRecorder);
+		threadLoggedRuntime = new ThreadLoggedRuntime(resourceLoader, classLoader, backends, runtimeOptions, threadExecutionRecorder, runtimeGlue);
 	}
 
 	@Test
