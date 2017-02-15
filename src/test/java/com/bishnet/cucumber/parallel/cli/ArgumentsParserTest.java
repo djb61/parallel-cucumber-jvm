@@ -15,6 +15,7 @@ public class ArgumentsParserTest {
 	private static final String REPORT_MYREPORT_JSON = "report" + File.pathSeparatorChar + "myreport.json";
 	private static final String REPORT_MYREPORT = "report" + File.pathSeparatorChar + "myreport";
 	private static final String REPORT_THREADREPORT = "report" + File.pathSeparatorChar + "threadreportdir";
+	private static final String REPORT_RERUNREPORT = "report" + File.pathSeparatorChar + "rerunReport.rerun";
 
 	@Test
 	public void numberOfThreadsShouldMatchNumberOfProcessorsWhenNotSpecified() {
@@ -272,6 +273,26 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.threadTimelineReportRequired).isTrue();
+	}
+
+	@Test
+	public void isRerunReportRequiredShouldBeTrueIfRerunArgumentWasPassed() {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--plugin");
+		arguments.add("rerun:" + REPORT_RERUNREPORT);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.rerunReportRequired).isTrue();
+	}
+	
+	@Test
+	public void finalReportPathIsParsedFromRerunPluginArgument() {
+		List<String> reportArgsList = new ArrayList<String>();
+		reportArgsList.add("--plugin");
+		reportArgsList.add("rerun:" + REPORT_RERUNREPORT);
+		ArgumentsParser argumentsParser = new ArgumentsParser(reportArgsList);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.rerunReportReportPath.toString()).isEqualTo(REPORT_RERUNREPORT);
 	}
 
 	@Test
