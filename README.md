@@ -38,8 +38,7 @@ Usage
 
 ## Limitations
 1. CLI is the only supported execution mechanism.
-2. Specifying a rerun output formatter is not safe as all threads will attempt to update the same file. Specifying a rerun file as the input of scenarios to run is fine.
-3. Only the cucumber-java backend has been tested. Other backends may or may not work correctly.
+2. Only the cucumber-java backend has been tested. Other backends may or may not work correctly.
 
 ## How it works
 1. The list of features to be executed is gathered based on the command line constraints provided.

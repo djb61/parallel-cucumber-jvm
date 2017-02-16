@@ -7,6 +7,7 @@ import java.util.List;
 import com.bishnet.cucumber.parallel.cli.ArgumentsParser;
 import com.bishnet.cucumber.parallel.report.HtmlReportMerger;
 import com.bishnet.cucumber.parallel.report.JsonReportMerger;
+import com.bishnet.cucumber.parallel.report.RerunReportMerger;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionReporter;
 
@@ -74,6 +75,10 @@ public class ParallelRuntime {
 
 		byte result = executor.run();
 
+		if (runtimeConfiguration.rerunReportRequired) {
+			RerunReportMerger merger = new RerunReportMerger(executor.getRerunReports());
+			merger.merge(runtimeConfiguration.rerunReportReportPath);
+		}
 		if (runtimeConfiguration.jsonReportRequired) {
 			JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
 			merger.merge(runtimeConfiguration.jsonReportPath);
@@ -86,7 +91,6 @@ public class ParallelRuntime {
 			ThreadExecutionReporter threadExecutionReporter = new ThreadExecutionReporter();
 			threadExecutionReporter.writeReport(threadExecutionRecorder.getRecordedData(), runtimeConfiguration.threadTimelineReportPath);
 		}
-		
 		
 		return result;
 	}

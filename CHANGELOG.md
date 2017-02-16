@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.5 (Unreleased)
+=====================
+* Implement handling for rerun plugin
+
 0.1.4 (2016-11-06)
 =====================
 * Switch to requiring Java 8.

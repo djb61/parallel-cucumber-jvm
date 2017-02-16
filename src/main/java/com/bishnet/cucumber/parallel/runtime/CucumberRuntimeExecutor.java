@@ -21,6 +21,7 @@ public class CucumberRuntimeExecutor {
 	private RuntimeConfiguration runtimeConfiguration;
 	private List<Path> htmlReports = new ArrayList<Path>();
 	private List<Path> jsonReports = new ArrayList<Path>();
+	private List<Path> rerunReports = new ArrayList<Path>();
 
 	public CucumberRuntimeExecutor(CucumberRuntimeFactory runtimeFactory, List<Path> rerunFiles,
 			RuntimeConfiguration runtimeConfiguration) {
@@ -35,6 +36,10 @@ public class CucumberRuntimeExecutor {
 
 	public List<Path> getJsonReports() {
 		return jsonReports;
+	}
+	
+	public List<Path> getRerunReports() {
+		return rerunReports;
 	}
 
 	public byte run() throws InterruptedException, IOException {
@@ -63,6 +68,14 @@ public class CucumberRuntimeExecutor {
 
 	private List<String> buildCallableRuntimeArgs(Path rerunFile) throws IOException {
 		List<String> callableRuntimeArgs = new ArrayList<String>();
+		
+		if (runtimeConfiguration.rerunReportRequired){
+			Path rerunReport = Files.createTempFile("parallelCukes", ".rerun");
+			rerunReport.toFile().deleteOnExit();
+			rerunReports.add(rerunReport);
+			callableRuntimeArgs.add("--plugin");
+			callableRuntimeArgs.add("rerun:" + rerunReport);
+		}
 		if (runtimeConfiguration.jsonReportRequired) {
 			Path jsonReport = Files.createTempFile("parallelCukes", ".json");
 			jsonReport.toFile().deleteOnExit();
@@ -77,7 +90,9 @@ public class CucumberRuntimeExecutor {
 			callableRuntimeArgs.add("--plugin");
 			callableRuntimeArgs.add("html:" + htmlReport);
 		}
+		
 		callableRuntimeArgs.add("@" + rerunFile);
+		
 		return callableRuntimeArgs;
 	}
 }
