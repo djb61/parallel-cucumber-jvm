@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.5 (2017-03-17)
+=====================
+* Fixed unhandled IllegalArgumentException when the feature file is empty or contains no scenarios that matched the filters.
+
 0.1.4 (2016-11-06)
 =====================
 * Switch to requiring Java 8.

@@ -10,12 +10,11 @@ import org.junit.Test;
 public class ListUtilsTest {
 
 	@Test
-	public void shouldReturnASingleEmptyListIfAnEmptySourceListIsProvided() {
-		int numberOfSegments = 1;
+	public void shouldReturnEmptyListIfAnEmptySourceListIsProvided() {
+		int numberOfSegments = 0;
 		List<Object> sourceList = new ArrayList<>();
 		List<List<Object>> partitionedList = ListUtils.partition(sourceList, numberOfSegments);
 		assertThat(partitionedList.size()).isEqualTo(numberOfSegments);
-		assertThat(partitionedList.get(0)).isEmpty();
 	}
 
 	@Test
