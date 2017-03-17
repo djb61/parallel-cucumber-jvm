@@ -9,7 +9,6 @@ public class ListUtils {
 	public static <T> List<List<T>> partition(List<T> sourceList, int numberOfSegments) {
 		List<List<T>> partitionedList = new ArrayList<>();
 		if (sourceList.isEmpty()) {
-			partitionedList.add(Collections.<T> emptyList());
 			return partitionedList;
 		}
 

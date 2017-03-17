@@ -47,6 +47,32 @@ public class FeatureSplitterTest {
 		assertThat(rerunFiles.size()).isEqualTo(features.size());
 	}
 
+	@Test
+	public void whenFeatureIsEmptyShouldExcludeEntireFeature() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+        arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/ValidFeatureWithNoScenarios.feature");
+        RuntimeConfiguration runtimeConfiguration = getRuntimeConfiguration(arguments, 1);
+        FeatureParser featureParser = new FeatureParser(runtimeConfiguration, Thread.currentThread().getContextClassLoader());
+        FeatureSplitter featureSplitter = new FeatureSplitter(runtimeConfiguration, featureParser.parseFeatures());
+        List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
+        assertThat(rerunFiles.size()).isEqualTo(0);
+    }
+
+	@Test
+	public void whenFeatureContainsNoScenariosMatchedTheFiltersShouldExcludeEntireFeature() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+        arguments.add("classpath:com/bishnet/cucumber/parallel/runtime/samplefeatures/individual/ValidFeatureWithExcludingTag.feature");
+        arguments.add("--tags");
+        arguments.add("@IncludedTag");
+        arguments.add("--tags");
+        arguments.add("~@ExcludedTag");
+        RuntimeConfiguration runtimeConfiguration = getRuntimeConfiguration(arguments, 1);
+        FeatureParser featureParser = new FeatureParser(runtimeConfiguration, Thread.currentThread().getContextClassLoader());
+        FeatureSplitter featureSplitter = new FeatureSplitter(runtimeConfiguration, featureParser.parseFeatures());
+        List<Path> rerunFiles = featureSplitter.splitFeaturesIntoRerunFiles();
+        assertThat(rerunFiles.size()).isEqualTo(0);
+    }
+
 	private RuntimeConfiguration getRuntimeConfiguration(List<String> featureParsingArguments, int numberOfThreads) {
 		return new RuntimeConfiguration(numberOfThreads, null, featureParsingArguments, null, null, false, null, false, null, false);
 	}
