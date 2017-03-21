@@ -39,7 +39,7 @@ public class CucumberRuntimeExecutor {
 
 	public byte run() throws InterruptedException, IOException {
 		byte result = 0;
-		ExecutorService executor = Executors.newFixedThreadPool(rerunFiles.size());
+		ExecutorService executor = Executors.newFixedThreadPool(runtimeConfiguration.numberOfThreads);
 		List<CucumberRuntimeCallable> runtimes = new ArrayList<CucumberRuntimeCallable>();
 		for (Path rerunFile : rerunFiles) {
 			CucumberRuntimeCallable runtimeCallable = new CucumberRuntimeCallable(buildCallableRuntimeArgs(rerunFile),

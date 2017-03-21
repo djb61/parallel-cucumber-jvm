@@ -294,4 +294,22 @@ public class ArgumentsParserTest {
 		assertThat(runtimeConfiguration.threadTimelineReportPath.toString()).isEqualTo(REPORT_THREADREPORT);
 	}
 
+	@Test
+	public void featureDistributionArgumentShouldBeRemovedFromResultingCucumberArgsListAndDynamicDistributionOptionShouldBeTrue() {
+		List<String> arguments = new ArrayList<>();
+		arguments.add("--dynamic-feature-distribution");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.dynamicFeatureDistribution).isTrue();
+		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
+	}
+
+    @Test
+    public void featureDistributionOptionShouldBeFalseIfNotSpecified() {
+        List<String> arguments = new ArrayList<>();
+        ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+        RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+        assertThat(runtimeConfiguration.dynamicFeatureDistribution).isFalse();
+    }
+
 }

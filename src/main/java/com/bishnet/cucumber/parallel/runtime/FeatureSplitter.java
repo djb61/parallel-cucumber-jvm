@@ -27,8 +27,7 @@ public class FeatureSplitter {
 	public List<Path> splitFeaturesIntoRerunFiles() throws IOException {
 		List<Path> rerunPaths = new ArrayList<Path>();
 		List<CucumberFeature> filteredFeatures = filterEmptyFeatures(features);
-		List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(filteredFeatures, runtimeConfiguration.numberOfThreads);
-
+		List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(filteredFeatures, getNumberOfSegments(filteredFeatures));
 		for (List<CucumberFeature> threadFeatures : partitionedFeatures) {
 			rerunPaths.add(createSingleRerunFile(threadFeatures));
 		}
@@ -57,5 +56,12 @@ public class FeatureSplitter {
 		}
 		cleanFeatureList.removeAll(emptyFeatures);
 		return cleanFeatureList;
+	}
+
+	private int getNumberOfSegments(List<CucumberFeature> features) {
+		if (runtimeConfiguration.dynamicFeatureDistribution) {
+			return features.size();
+		}
+		return runtimeConfiguration.numberOfThreads;
 	}
 }
