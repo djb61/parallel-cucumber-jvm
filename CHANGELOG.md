@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.6 (2017-03-21)
+=====================
+* Implemented a new option for dynamic features distribution among threads.
+
 0.1.5 (2017-03-17)
 =====================
 * Fixed unhandled IllegalArgumentException when the feature file is empty or contains no scenarios that matched the filters.
