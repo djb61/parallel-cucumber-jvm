@@ -44,6 +44,12 @@ public class ParallelRuntime {
 			return 0;
 		try {
 			List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
+			if (rerunFiles.isEmpty()) {
+				System.out.println(
+						String.format("None of the features or scenarios at %s matched the filters, or no scenarios found.",
+								runtimeConfiguration.featurePaths));
+				return 0;
+			}
 			return runFeatures(rerunFiles);
 		} catch (InterruptedException | IOException e) {
 			throw new CucumberException(e);

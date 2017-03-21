@@ -15,10 +15,12 @@ public class RuntimeConfiguration {
 	public final boolean htmlReportRequired;
 	public final boolean jsonReportRequired;
 	public final boolean threadTimelineReportRequired;
+    public final boolean dynamicFeatureDistribution;
 
 	public RuntimeConfiguration(int numberOfThreads, List<String> cucumberPassThroughArguments,
-								List<String> featureParsingArguments, List<String> featurePaths, Path htmlReportPath, boolean htmlReportRequired,
-								Path jsonReportPath, boolean jsonReportRequired, Path threadTimelineReportPath, boolean threadTimelineReportRequired) {
+			List<String> featureParsingArguments, List<String> featurePaths, Path htmlReportPath, boolean htmlReportRequired,
+			Path jsonReportPath, boolean jsonReportRequired, Path threadTimelineReportPath, boolean threadTimelineReportRequired,
+			boolean dynamicFeatureDistribution) {
 		this.numberOfThreads = numberOfThreads;
 		this.cucumberPassthroughArguments = cucumberPassThroughArguments;
 		this.featureParsingArguments = featureParsingArguments;
@@ -29,6 +31,7 @@ public class RuntimeConfiguration {
 		this.jsonReportRequired = jsonReportRequired;
 		this.threadTimelineReportPath = threadTimelineReportPath;
 		this.threadTimelineReportRequired = threadTimelineReportRequired;
+        this.dynamicFeatureDistribution = dynamicFeatureDistribution;
 	}
 
 }

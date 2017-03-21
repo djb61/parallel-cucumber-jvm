@@ -17,8 +17,15 @@ public class FakeCucumberRuntimeFactory extends CucumberRuntimeFactory {
 	private int invocationCount;
 
 	public FakeCucumberRuntimeFactory(byte[] perInvocationExitCodes, boolean[] perInvocationShouldThrowException) {
-		super(new RuntimeConfiguration(0, null, null, null, null, false, null, false, null, false), Thread.currentThread()
+		super(new RuntimeConfiguration(0, null, null, null, null, false, null, false, null, false, false), Thread.currentThread()
 				.getContextClassLoader());
+		this.perInvocationExitCodes = perInvocationExitCodes;
+		this.perInvocationShouldThrowException = perInvocationShouldThrowException;
+	}
+
+	public FakeCucumberRuntimeFactory(byte[] perInvocationExitCodes, boolean[] perInvocationShouldThrowException,
+			RuntimeConfiguration runtimeConfiguration) {
+		super(runtimeConfiguration, Thread.currentThread().getContextClassLoader());
 		this.perInvocationExitCodes = perInvocationExitCodes;
 		this.perInvocationShouldThrowException = perInvocationShouldThrowException;
 	}
