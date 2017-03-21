@@ -301,7 +301,6 @@ public class ArgumentsParserTest {
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
 		assertThat(runtimeConfiguration.dynamicFeatureDistribution).isTrue();
-		assertThat(runtimeConfiguration.cucumberPassthroughArguments.size()).isEqualTo(0);
 	}
 
     @Test
