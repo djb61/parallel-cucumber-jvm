@@ -37,7 +37,7 @@ public class CucumberRuntimeExecutor {
 	public List<Path> getJsonReports() {
 		return jsonReports;
 	}
-	
+
 	public List<Path> getRerunReports() {
 		return rerunReports;
 	}
@@ -68,7 +68,7 @@ public class CucumberRuntimeExecutor {
 
 	private List<String> buildCallableRuntimeArgs(Path rerunFile) throws IOException {
 		List<String> callableRuntimeArgs = new ArrayList<String>();
-		
+
 		if (runtimeConfiguration.rerunReportRequired){
 			Path rerunReport = Files.createTempFile("parallelCukes", ".rerun");
 			rerunReport.toFile().deleteOnExit();
@@ -90,9 +90,9 @@ public class CucumberRuntimeExecutor {
 			callableRuntimeArgs.add("--plugin");
 			callableRuntimeArgs.add("html:" + htmlReport);
 		}
-		
+
 		callableRuntimeArgs.add("@" + rerunFile);
-		
+
 		return callableRuntimeArgs;
 	}
 }

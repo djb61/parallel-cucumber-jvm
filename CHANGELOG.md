@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.6a (Unreleased)
+=====================
+* Implement rerun failed scenarios + create flaky tests report (cucumber json)
+
 0.1.5 (Unreleased)
 =====================
 * Implement handling for rerun plugin

@@ -2,6 +2,7 @@ package com.bishnet.cucumber.parallel.runtime;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import com.bishnet.cucumber.parallel.cli.ArgumentsParser;
@@ -19,6 +20,7 @@ public class ParallelRuntime {
 	private RuntimeConfiguration runtimeConfiguration;
 	private ClassLoader cucumberClassLoader;
 	private CucumberBackendFactory cucumberBackendFactory;
+	private int triedRerun;
 
 	public ParallelRuntime(List<String> arguments) {
 		this(arguments, Thread.currentThread().getContextClassLoader());
@@ -44,11 +46,25 @@ public class ParallelRuntime {
 		if (features.isEmpty())
 			return 0;
 		try {
-			List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
-			return runFeatures(rerunFiles);
+			return runWithRerunFailed(features);
 		} catch (InterruptedException | IOException e) {
 			throw new CucumberException(e);
 		}
+	}
+
+	private byte runWithRerunFailed(List<CucumberFeature> features) throws IOException, InterruptedException {
+		List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
+		byte result = runFeatures(rerunFiles);
+		if (result != 0 && runtimeConfiguration.rerunReportRequired) {
+			triedRerun = 1;
+			while (result != 0 && triedRerun <= runtimeConfiguration.rerunAttemptsCount) {
+				rerunFiles.clear();
+				rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
+				result = runFeatures(rerunFiles);
+				triedRerun++;
+			}
+		}
+		return result;
 	}
 
 	private List<CucumberFeature> parseFeatures() {
@@ -81,7 +97,13 @@ public class ParallelRuntime {
 		}
 		if (runtimeConfiguration.jsonReportRequired) {
 			JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
-			merger.merge(runtimeConfiguration.jsonReportPath);
+			if (triedRerun == 0) {
+				merger.merge(runtimeConfiguration.jsonReportPath);
+			}
+			if (result != 0 && triedRerun != runtimeConfiguration.rerunAttemptsCount) {
+				merger.mergeRerunFailedReports(runtimeConfiguration.jsonReportPath,
+						Paths.get(runtimeConfiguration.flakyReportPath.toString(), "flaky_" + triedRerun + ".json"));
+			}
 		}
 		if (runtimeConfiguration.htmlReportRequired) {
 			HtmlReportMerger merger = new HtmlReportMerger(executor.getHtmlReports());
@@ -91,7 +113,7 @@ public class ParallelRuntime {
 			ThreadExecutionReporter threadExecutionReporter = new ThreadExecutionReporter();
 			threadExecutionReporter.writeReport(threadExecutionRecorder.getRecordedData(), runtimeConfiguration.threadTimelineReportPath);
 		}
-		
+
 		return result;
 	}
 }

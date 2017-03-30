@@ -30,6 +30,8 @@ public class ArgumentsParser {
 		Path threadTimelineReportPath = null;
 		boolean rerunReportRequired = false;
 		Path rerunReportReportPath = null;
+		int rerunAttemptsCount = 0;
+		Path flakyReportPath = null;
 
 		while (!parseArguments.isEmpty()) {
 			String arg = parseArguments.remove(0).trim();
@@ -51,6 +53,10 @@ public class ArgumentsParser {
 				} else if (pluginArgsArray[0].equals("rerun")) {
 					rerunReportRequired = true;
 					rerunReportReportPath = Paths.get(pluginArgsArray[1]);
+				} else if (pluginArgsArray[0].equals("rerun-count")) {
+					rerunAttemptsCount = Integer.parseInt(pluginArgsArray[1]);
+				} else if (pluginArgsArray[0].equals("flaky-report")) {
+					flakyReportPath = Paths.get(pluginArgsArray[1]);
 				} else {
 					cucumberArgs.add(arg);
 					cucumberArgs.add(pluginValue);
@@ -83,7 +89,8 @@ public class ArgumentsParser {
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(numberOfThreads,
 				Collections.unmodifiableList(cucumberArgs), Collections.unmodifiableList(fullFeatureParsingArguments),
 				Collections.unmodifiableList(featurePaths), htmlReportPath, htmlReportRequired, jsonReportPath,
-				jsonReportRequired, threadTimelineReportPath, threadTimelineReportRequired, rerunReportReportPath, rerunReportRequired);
+				jsonReportRequired, threadTimelineReportPath, threadTimelineReportRequired, rerunReportReportPath,
+				rerunReportRequired, rerunAttemptsCount, flakyReportPath);
 		return runtimeConfiguration;
 	}
 }
