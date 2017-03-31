@@ -93,7 +93,7 @@ public class CucumberRuntimeFactoryTest {
 	private RuntimeConfiguration getRuntimeConfiguration(List<String> featurePaths, List<String>
 			cucumberPassthroughArguments, boolean threadTimelineReportRequired) {
 		return new RuntimeConfiguration(0, cucumberPassthroughArguments, null, featurePaths,
-				null, false, null, false, null, threadTimelineReportRequired, null, false, 0, null);
+				null, false, null, false, null, threadTimelineReportRequired, null, false, 0, null, 0);
 	}
 
 

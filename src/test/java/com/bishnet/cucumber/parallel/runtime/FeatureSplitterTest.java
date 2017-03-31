@@ -49,6 +49,6 @@ public class FeatureSplitterTest {
 
 	private RuntimeConfiguration getRuntimeConfiguration(List<String> featureParsingArguments, int numberOfThreads) {
 		return new RuntimeConfiguration(numberOfThreads, null, featureParsingArguments, null, null, false, null,
-				false, null, false, null, false, 0, null);
+				false, null, false, null, false, 0, null, 0);
 	}
 }

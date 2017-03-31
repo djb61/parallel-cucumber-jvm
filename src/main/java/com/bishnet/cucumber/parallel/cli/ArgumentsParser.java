@@ -32,6 +32,7 @@ public class ArgumentsParser {
 		Path rerunReportReportPath = null;
 		int rerunAttemptsCount = 0;
 		Path flakyReportPath = null;
+		int flakyMaxCount = 0;
 
 		while (!parseArguments.isEmpty()) {
 			String arg = parseArguments.remove(0).trim();
@@ -57,6 +58,8 @@ public class ArgumentsParser {
 					rerunAttemptsCount = Integer.parseInt(pluginArgsArray[1]);
 				} else if (pluginArgsArray[0].equals("flaky-report")) {
 					flakyReportPath = Paths.get(pluginArgsArray[1]);
+				} else if (pluginArgsArray[0].equals("flaky-threshold")) {
+					flakyMaxCount = Integer.parseInt(pluginArgsArray[1]);
 				} else {
 					cucumberArgs.add(arg);
 					cucumberArgs.add(pluginValue);
@@ -90,7 +93,7 @@ public class ArgumentsParser {
 				Collections.unmodifiableList(cucumberArgs), Collections.unmodifiableList(fullFeatureParsingArguments),
 				Collections.unmodifiableList(featurePaths), htmlReportPath, htmlReportRequired, jsonReportPath,
 				jsonReportRequired, threadTimelineReportPath, threadTimelineReportRequired, rerunReportReportPath,
-				rerunReportRequired, rerunAttemptsCount, flakyReportPath);
+				rerunReportRequired, rerunAttemptsCount, flakyReportPath, flakyMaxCount);
 		return runtimeConfiguration;
 	}
 }

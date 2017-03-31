@@ -11,6 +11,7 @@ import com.bishnet.cucumber.parallel.report.JsonReportMerger;
 import com.bishnet.cucumber.parallel.report.RerunReportMerger;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionReporter;
+import com.bishnet.cucumber.parallel.util.RerunUtils;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
@@ -56,12 +57,14 @@ public class ParallelRuntime {
 		List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
 		byte result = runFeatures(rerunFiles);
 		if (result != 0 && runtimeConfiguration.rerunReportRequired) {
-			triedRerun = 1;
-			while (result != 0 && triedRerun <= runtimeConfiguration.rerunAttemptsCount) {
+			int failedCount = RerunUtils.countScenariosInRerunFile(runtimeConfiguration.rerunReportReportPath);
+			if (failedCount > runtimeConfiguration.flakyMaxCount) {
+				return result;
+			}
+			while (result != 0 && triedRerun++ <= runtimeConfiguration.rerunAttemptsCount) {
 				rerunFiles.clear();
 				rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
 				result = runFeatures(rerunFiles);
-				triedRerun++;
 			}
 		}
 		return result;

@@ -99,6 +99,6 @@ public class CucumberRuntimeExecutorTest {
 
 	private RuntimeConfiguration getRuntimeConfiguration(boolean jsonReportRequired, boolean htmlReportRequired, boolean rerunReportRequired) {
 		return new RuntimeConfiguration(0, null, null, null, null, htmlReportRequired, null,
-				jsonReportRequired, null, false, null, rerunReportRequired, 0, null);
+				jsonReportRequired, null, false, null, rerunReportRequired, 0, null, 0);
 	}
 }

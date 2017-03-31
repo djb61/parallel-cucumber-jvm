@@ -94,6 +94,6 @@ public class RerunFileBuilderTest {
 
 	private RuntimeConfiguration getRuntimeConfiguration(List<String> featureParsingArguments) {
 		return new RuntimeConfiguration(0, null, featureParsingArguments, null, null, false, null, false,
-				null, false, null, false, 0, null);
+				null, false, null, false, 0, null, 0);
 	}
 }
