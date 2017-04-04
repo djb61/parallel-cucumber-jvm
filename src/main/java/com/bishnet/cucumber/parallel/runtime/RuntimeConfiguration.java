@@ -14,11 +14,11 @@ public class RuntimeConfiguration {
 	public final Path threadTimelineReportPath;
 	public final Path rerunReportReportPath;
 	public final boolean htmlReportRequired;
-	public final boolean jsonReportRequired;
+	public boolean jsonReportRequired;
 	public final boolean threadTimelineReportRequired;
 	public final boolean rerunReportRequired;
 	public final int rerunAttemptsCount;
-	public Path flakyReportPath;
+	public final Path flakyReportPath;
 	public final int flakyMaxCount;
 
 	public RuntimeConfiguration(int numberOfThreads, List<String> cucumberPassThroughArguments,
@@ -43,4 +43,7 @@ public class RuntimeConfiguration {
 		this.flakyMaxCount = flakyMaxCount;
 	}
 
+	public void setJsonReportRequired(boolean jsonReportRequired) {
+		this.jsonReportRequired = jsonReportRequired;
+	}
 }

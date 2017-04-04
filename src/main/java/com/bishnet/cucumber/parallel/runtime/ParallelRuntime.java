@@ -55,16 +55,30 @@ public class ParallelRuntime {
 
 	private byte runWithRerunFailed(List<CucumberFeature> features) throws IOException, InterruptedException {
 		List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
+		if (rerunFiles.isEmpty()) {
+			System.out.println(
+					String.format("None of the features or scenarios at %s matched the filters, or no scenarios found.",
+							runtimeConfiguration.featurePaths));
+			return 0;
+		}
 		byte result = runFeatures(rerunFiles);
 		if (result != 0 && runtimeConfiguration.rerunReportRequired) {
 			int failedCount = RerunUtils.countScenariosInRerunFile(runtimeConfiguration.rerunReportReportPath);
 			if (failedCount > runtimeConfiguration.flakyMaxCount) {
+				System.out.println(
+						String.format("%d TESTS FAILED - MORE THEN ALLOWED FOR RERUN (%d)! Aborting rerun flaky.",
+								failedCount, runtimeConfiguration.flakyMaxCount));
 				return result;
 			}
-			while (result != 0 && triedRerun++ <= runtimeConfiguration.rerunAttemptsCount) {
+			System.out.println(String.format(
+					"RERUN FLAKY TESTS STARTED. WILL TRY FOR %d ATTEMPT(S).", runtimeConfiguration.rerunAttemptsCount));
+			triedRerun = 1;
+			runtimeConfiguration.setJsonReportRequired(true);
+			while (result != 0 && triedRerun <= runtimeConfiguration.rerunAttemptsCount) {
 				rerunFiles.clear();
 				rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
 				result = runFeatures(rerunFiles);
+				System.out.println(String.format("RERUN FLAKY TESTS ATTEMPT #%d FINISHED.", triedRerun++));
 			}
 		}
 		return result;
@@ -102,8 +116,7 @@ public class ParallelRuntime {
 			JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
 			if (triedRerun == 0) {
 				merger.merge(runtimeConfiguration.jsonReportPath);
-			}
-			if (result != 0 && triedRerun != runtimeConfiguration.rerunAttemptsCount) {
+			} else {
 				merger.mergeRerunFailedReports(runtimeConfiguration.jsonReportPath,
 						Paths.get(runtimeConfiguration.flakyReportPath.toString(), "flaky_" + triedRerun + ".json"));
 			}
@@ -116,6 +129,7 @@ public class ParallelRuntime {
 			ThreadExecutionReporter threadExecutionReporter = new ThreadExecutionReporter();
 			threadExecutionReporter.writeReport(threadExecutionRecorder.getRecordedData(), runtimeConfiguration.threadTimelineReportPath);
 		}
+
 
 		return result;
 	}

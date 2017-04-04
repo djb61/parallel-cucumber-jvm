@@ -32,7 +32,7 @@ public class ArgumentsParser {
 		Path rerunReportReportPath = null;
 		int rerunAttemptsCount = 0;
 		Path flakyReportPath = null;
-		int flakyMaxCount = 0;
+		int flakyMaxCount = 10;
 
 		while (!parseArguments.isEmpty()) {
 			String arg = parseArguments.remove(0).trim();
