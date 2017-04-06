@@ -14,7 +14,7 @@ public class RuntimeConfiguration {
 	public final Path threadTimelineReportPath;
 	public final Path rerunReportReportPath;
 	public final boolean htmlReportRequired;
-	public boolean jsonReportRequired;
+	public final boolean jsonReportRequired;
 	public final boolean threadTimelineReportRequired;
 	public final boolean rerunReportRequired;
 	public final int rerunAttemptsCount;
@@ -43,7 +43,4 @@ public class RuntimeConfiguration {
 		this.flakyMaxCount = flakyMaxCount;
 	}
 
-	public void setJsonReportRequired(boolean jsonReportRequired) {
-		this.jsonReportRequired = jsonReportRequired;
-	}
 }

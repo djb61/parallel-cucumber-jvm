@@ -39,7 +39,12 @@ public class ParallelRuntime {
 		this.cucumberClassLoader = cucumberClassLoader;
 		this.cucumberBackendFactory = cucumberBackendFactory;
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
-		runtimeConfiguration = argumentsParser.parse();
+		try {
+			runtimeConfiguration = argumentsParser.parse();
+		}
+		catch (IOException e) {
+			throw new CucumberException(e);
+		}
 	}
 
 	public byte run() {
@@ -73,13 +78,14 @@ public class ParallelRuntime {
 			System.out.println(String.format(
 					"RERUN FLAKY TESTS STARTED. WILL TRY FOR %d ATTEMPT(S).", runtimeConfiguration.rerunAttemptsCount));
 			triedRerun = 1;
-			runtimeConfiguration.setJsonReportRequired(true);
 			while (result != 0 && triedRerun <= runtimeConfiguration.rerunAttemptsCount) {
 				rerunFiles.clear();
 				rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
 				result = runFeatures(rerunFiles);
 				System.out.println(String.format("RERUN FLAKY TESTS ATTEMPT #%d FINISHED.", triedRerun++));
 			}
+			System.out.println(String.format(
+					"RERUN FLAKY TESTS FINISHED. TRIED FOR %d ATTEMPT(S).", triedRerun));
 		}
 		return result;
 	}

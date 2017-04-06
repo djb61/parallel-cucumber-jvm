@@ -1,5 +1,7 @@
 package com.bishnet.cucumber.parallel.cli;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public class ArgumentsParser {
 		this.arguments = arguments;
 	}
 
-	public RuntimeConfiguration parse() {
+	public RuntimeConfiguration parse() throws IOException {
 		List<String> cucumberArgs = new ArrayList<String>();
 		List<String> featureParseOnlyArgs = new ArrayList<String>();
 		List<String> featurePaths = new ArrayList<String>();
@@ -89,6 +91,11 @@ public class ArgumentsParser {
 		fullFeatureParsingArguments.addAll(cucumberArgs);
 		fullFeatureParsingArguments.addAll(featureParseOnlyArgs);
 		fullFeatureParsingArguments.addAll(featurePaths);
+		if (rerunReportRequired && rerunAttemptsCount > 0 && !jsonReportRequired) {
+			jsonReportRequired = true;
+			jsonReportPath = Files.createTempFile("parallelCukes", ".json");
+			jsonReportPath.toFile().deleteOnExit();
+		}
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(numberOfThreads,
 				Collections.unmodifiableList(cucumberArgs), Collections.unmodifiableList(fullFeatureParsingArguments),
 				Collections.unmodifiableList(featurePaths), htmlReportPath, htmlReportRequired, jsonReportPath,

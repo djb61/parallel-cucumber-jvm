@@ -70,29 +70,41 @@ public class CucumberRuntimeExecutor {
 		List<String> callableRuntimeArgs = new ArrayList<String>();
 
 		if (runtimeConfiguration.rerunReportRequired){
-			Path rerunReport = Files.createTempFile("parallelCukes", ".rerun");
-			rerunReport.toFile().deleteOnExit();
-			rerunReports.add(rerunReport);
-			callableRuntimeArgs.add("--plugin");
-			callableRuntimeArgs.add("rerun:" + rerunReport);
+			addRerunReportArgs(callableRuntimeArgs);
 		}
 		if (runtimeConfiguration.jsonReportRequired) {
-			Path jsonReport = Files.createTempFile("parallelCukes", ".json");
-			jsonReport.toFile().deleteOnExit();
-			jsonReports.add(jsonReport);
-			callableRuntimeArgs.add("--plugin");
-			callableRuntimeArgs.add("json:" + jsonReport);
+			addJsonReportArgs(callableRuntimeArgs);
 		}
 		if (runtimeConfiguration.htmlReportRequired) {
-			Path htmlReport = Files.createTempDirectory("parallelCukes");
-			Runtime.getRuntime().addShutdownHook(new Thread(new RemoveDirectoryRunnable(htmlReport)));
-			htmlReports.add(htmlReport);
-			callableRuntimeArgs.add("--plugin");
-			callableRuntimeArgs.add("html:" + htmlReport);
+			addHtmlReportArgs(callableRuntimeArgs);
 		}
 
 		callableRuntimeArgs.add("@" + rerunFile);
 
 		return callableRuntimeArgs;
+	}
+
+	private void addRerunReportArgs(List<String> callableRuntimeArgs ) throws IOException {
+		Path rerunReport = Files.createTempFile("parallelCukes", ".rerun");
+		rerunReport.toFile().deleteOnExit();
+		rerunReports.add(rerunReport);
+		callableRuntimeArgs.add("--plugin");
+		callableRuntimeArgs.add("rerun:" + rerunReport);
+	}
+
+	private void addJsonReportArgs(List<String> callableRuntimeArgs ) throws IOException {
+		Path jsonReport = Files.createTempFile("parallelCukes", ".json");
+		jsonReport.toFile().deleteOnExit();
+		jsonReports.add(jsonReport);
+		callableRuntimeArgs.add("--plugin");
+		callableRuntimeArgs.add("json:" + jsonReport);
+	}
+
+	private void addHtmlReportArgs(List<String> callableRuntimeArgs ) throws IOException {
+		Path htmlReport = Files.createTempDirectory("parallelCukes");
+		Runtime.getRuntime().addShutdownHook(new Thread(new RemoveDirectoryRunnable(htmlReport)));
+		htmlReports.add(htmlReport);
+		callableRuntimeArgs.add("--plugin");
+		callableRuntimeArgs.add("html:" + htmlReport);
 	}
 }
