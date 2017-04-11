@@ -32,7 +32,7 @@ public class ArgumentsParser {
 		Path threadTimelineReportPath = null;
 		boolean rerunReportRequired = false;
 		Path rerunReportReportPath = null;
-		int rerunAttemptsCount = 0;
+		int flakyAttemptsCount = 0;
 		Path flakyReportPath = null;
 		int flakyMaxCount = 10;
 
@@ -41,6 +41,12 @@ public class ArgumentsParser {
 
 			if (arg.equals("--num-threads")) {
 				numberOfThreads = Integer.parseInt(parseArguments.remove(0));
+			} else if (arg.equals("--flaky-rerun-attemptsCount")) {
+				flakyAttemptsCount = Integer.parseInt(parseArguments.remove(0));
+			} else if (arg.equals("--flaky-rerun-reportDir")) {
+				flakyReportPath = Paths.get(parseArguments.remove(0));
+			} else if (arg.equals("--flaky-rerun-threshold")) {
+				flakyMaxCount = Integer.parseInt(parseArguments.remove(0));
 			} else if (arg.equals("--plugin") || arg.equals("-p") || arg.equals("--format") || arg.equals("-f")) {
 				String pluginValue = parseArguments.remove(0);
 				String[] pluginArgsArray = pluginValue.split(":", 2);
@@ -56,12 +62,6 @@ public class ArgumentsParser {
 				} else if (pluginArgsArray[0].equals("rerun")) {
 					rerunReportRequired = true;
 					rerunReportReportPath = Paths.get(pluginArgsArray[1]);
-				} else if (pluginArgsArray[0].equals("rerun-count")) {
-					rerunAttemptsCount = Integer.parseInt(pluginArgsArray[1]);
-				} else if (pluginArgsArray[0].equals("flaky-report")) {
-					flakyReportPath = Paths.get(pluginArgsArray[1]);
-				} else if (pluginArgsArray[0].equals("flaky-threshold")) {
-					flakyMaxCount = Integer.parseInt(pluginArgsArray[1]);
 				} else {
 					cucumberArgs.add(arg);
 					cucumberArgs.add(pluginValue);
@@ -91,16 +91,36 @@ public class ArgumentsParser {
 		fullFeatureParsingArguments.addAll(cucumberArgs);
 		fullFeatureParsingArguments.addAll(featureParseOnlyArgs);
 		fullFeatureParsingArguments.addAll(featurePaths);
-		if (rerunReportRequired && rerunAttemptsCount > 0 && !jsonReportRequired) {
-			jsonReportRequired = true;
-			jsonReportPath = Files.createTempFile("parallelCukes", ".json");
-			jsonReportPath.toFile().deleteOnExit();
+		if (flakyAttemptsCount > 0) {
+			if (!jsonReportRequired) {
+				jsonReportRequired = true;
+				jsonReportPath = getTempJsonPath();
+			}
+			if (!rerunReportRequired) {
+				rerunReportRequired = true;
+				rerunReportReportPath = getTempRerunPath();
+			}
+			if (flakyReportPath == null) {
+				flakyReportPath = jsonReportPath.getParent();
+			}
 		}
 		RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(numberOfThreads,
 				Collections.unmodifiableList(cucumberArgs), Collections.unmodifiableList(fullFeatureParsingArguments),
 				Collections.unmodifiableList(featurePaths), htmlReportPath, htmlReportRequired, jsonReportPath,
 				jsonReportRequired, threadTimelineReportPath, threadTimelineReportRequired, rerunReportReportPath,
-				rerunReportRequired, rerunAttemptsCount, flakyReportPath, flakyMaxCount);
+				rerunReportRequired, flakyAttemptsCount, flakyReportPath, flakyMaxCount);
 		return runtimeConfiguration;
+	}
+
+	private Path getTempRerunPath() throws IOException {
+		Path rerunReportReportPath = Files.createTempFile("parallelCukesTmp", ".rerun");
+		rerunReportReportPath.toFile().deleteOnExit();
+		return rerunReportReportPath;
+	}
+
+	private Path getTempJsonPath() throws IOException {
+		Path jsonReportPath = Files.createTempFile("parallelCukesTmp", ".json");
+		jsonReportPath.toFile().deleteOnExit();
+		return jsonReportPath;
 	}
 }

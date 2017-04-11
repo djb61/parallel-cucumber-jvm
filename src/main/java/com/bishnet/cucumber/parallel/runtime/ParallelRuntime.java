@@ -12,7 +12,6 @@ import com.bishnet.cucumber.parallel.report.RerunReportMerger;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionReporter;
 import com.bishnet.cucumber.parallel.util.RerunUtils;
-
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
 
@@ -67,26 +66,31 @@ public class ParallelRuntime {
 			return 0;
 		}
 		byte result = runFeatures(rerunFiles);
-		if (result != 0 && runtimeConfiguration.rerunReportRequired) {
-			int failedCount = RerunUtils.countScenariosInRerunFile(runtimeConfiguration.rerunReportReportPath);
-			if (failedCount > runtimeConfiguration.flakyMaxCount) {
-				System.out.println(
-						String.format("%d TESTS FAILED - MORE THEN ALLOWED FOR RERUN (%d)! Aborting rerun flaky.",
-								failedCount, runtimeConfiguration.flakyMaxCount));
-				return result;
-			}
-			System.out.println(String.format(
-					"RERUN FLAKY TESTS STARTED. WILL TRY FOR %d ATTEMPT(S).", runtimeConfiguration.rerunAttemptsCount));
-			triedRerun = 1;
-			while (result != 0 && triedRerun <= runtimeConfiguration.rerunAttemptsCount) {
-				rerunFiles.clear();
-				rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
-				result = runFeatures(rerunFiles);
-				System.out.println(String.format("RERUN FLAKY TESTS ATTEMPT #%d FINISHED.", triedRerun++));
-			}
-			System.out.println(String.format(
-					"RERUN FLAKY TESTS FINISHED. TRIED FOR %d ATTEMPT(S).", triedRerun));
+		if (result != 0 && runtimeConfiguration.flakyAttemptsCount > 0) {
+			result = rerunFlakyTests(rerunFiles, result);
 		}
+		return result;
+	}
+
+	private byte rerunFlakyTests(List<Path> rerunFiles, byte result) throws IOException, InterruptedException {
+		int failedCount = RerunUtils.countScenariosInRerunFile(runtimeConfiguration.rerunReportReportPath);
+		if (failedCount > runtimeConfiguration.flakyMaxCount) {
+			System.out.println(
+					String.format("%d TESTS FAILED - MORE THEN ALLOWED FOR RERUN (%d)! Aborting rerun flaky.",
+							failedCount, runtimeConfiguration.flakyMaxCount));
+			return result;
+		}
+		System.out.println(String.format(
+				"RERUN FLAKY TESTS STARTED. WILL TRY FOR %d ATTEMPT(S).", runtimeConfiguration.flakyAttemptsCount));
+		triedRerun = 1;
+		while (result != 0 && triedRerun <= runtimeConfiguration.flakyAttemptsCount) {
+			rerunFiles.clear();
+			rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
+			result = runFeatures(rerunFiles);
+			System.out.println(String.format("RERUN FLAKY TESTS ATTEMPT #%d FINISHED.", triedRerun++));
+		}
+		System.out.println(String.format(
+				"RERUN FLAKY TESTS FINISHED. TRIED FOR %d ATTEMPT(S).", triedRerun));
 		return result;
 	}
 
@@ -114,24 +118,27 @@ public class ParallelRuntime {
 
 		byte result = executor.run();
 
-		if (runtimeConfiguration.rerunReportRequired) {
-			RerunReportMerger merger = new RerunReportMerger(executor.getRerunReports());
-			merger.merge(runtimeConfiguration.rerunReportReportPath);
-		}
-		if (runtimeConfiguration.jsonReportRequired) {
-			JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
-			if (triedRerun == 0) {
-				merger.merge(runtimeConfiguration.jsonReportPath);
-			} else {
-				merger.mergeRerunFailedReports(runtimeConfiguration.jsonReportPath,
-						Paths.get(runtimeConfiguration.flakyReportPath.toString(), "flaky_" + triedRerun + ".json"));
-			}
-		}
-		if (runtimeConfiguration.htmlReportRequired) {
-			HtmlReportMerger merger = new HtmlReportMerger(executor.getHtmlReports());
-			merger.merge(runtimeConfiguration.htmlReportPath);
-		}
-		if (runtimeConfiguration.threadTimelineReportRequired) {
+        if (triedRerun == 0) {
+            if (runtimeConfiguration.rerunReportRequired) {
+                RerunReportMerger merger = new RerunReportMerger(executor.getRerunReports());
+                merger.merge(runtimeConfiguration.rerunReportReportPath);
+            }
+            if (runtimeConfiguration.jsonReportRequired) {
+                JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
+                merger.merge(runtimeConfiguration.jsonReportPath);
+            }
+            if (runtimeConfiguration.htmlReportRequired) {
+                HtmlReportMerger merger = new HtmlReportMerger(executor.getHtmlReports());
+                merger.merge(runtimeConfiguration.htmlReportPath);
+            }
+        } else {
+            RerunReportMerger merger = new RerunReportMerger(executor.getRerunReports());
+            merger.merge(runtimeConfiguration.rerunReportReportPath);
+            JsonReportMerger jsonMerger = new JsonReportMerger(executor.getJsonReports());
+            jsonMerger.mergeRerunFailedReports(runtimeConfiguration.jsonReportPath,
+                    Paths.get(runtimeConfiguration.flakyReportPath.toString(), "flaky_" + triedRerun + ".json"));
+        }
+        if (runtimeConfiguration.threadTimelineReportRequired) {
 			ThreadExecutionReporter threadExecutionReporter = new ThreadExecutionReporter();
 			threadExecutionReporter.writeReport(threadExecutionRecorder.getRecordedData(), runtimeConfiguration.threadTimelineReportPath);
 		}

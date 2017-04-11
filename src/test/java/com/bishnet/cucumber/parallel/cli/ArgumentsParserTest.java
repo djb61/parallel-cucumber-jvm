@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class ArgumentsParserTest {
 	private static final String REPORT_MYREPORT = "report" + File.pathSeparatorChar + "myreport";
 	private static final String REPORT_THREADREPORT = "report" + File.pathSeparatorChar + "threadreportdir";
 	private static final String REPORT_RERUNREPORT = "report" + File.pathSeparatorChar + "rerunReport.rerun";
+	private static final String REPORT_FLAKY = "report" + File.pathSeparatorChar + "someflakyreportdir";
 
 	@Test
 	public void numberOfThreadsShouldMatchNumberOfProcessorsWhenNotSpecified() throws IOException {
@@ -287,14 +289,107 @@ public class ArgumentsParserTest {
 	}
 
 	@Test
-	public void isJsonReportRequiredShouldBeTrueAndTempJsonReportPathSetIfRerunArgumentWasPassed() throws IOException {
+	public void isJsonReportRequiredSetTrueAndTempJsonReportPathSetIfFlakyRerunArgumentWasPassed() throws IOException {
 		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportRequired).isTrue();
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).contains("parallelCukesTmp");
+		assertThat(runtimeConfiguration.jsonReportPath.endsWith(".json"));
+	}
+
+	@Test
+	public void isRerunReportRequiredSetTrueTempRerunReportPathSetIfFlakyRerunArgumentWasPassed() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.rerunReportRequired).isTrue();
+		assertThat(runtimeConfiguration.rerunReportReportPath.toString()).contains("parallelCukesTmp");
+		assertThat(runtimeConfiguration.rerunReportReportPath.endsWith(".rerun"));
+	}
+
+	@Test
+	public void isFlakyReportPathSetToJsonReportParentSetIfFlakyRerunArgumentWasPassedWithoutPath() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		Path jsonReportParent = runtimeConfiguration.jsonReportPath.getParent();
+		assertThat(runtimeConfiguration.flakyReportPath).isEqualTo(jsonReportParent);
+	}
+
+	@Test
+	public void flakyMaxCountSetToDefaultIfFlakyRerunArgumentsWasPassedWithoutflakyMaxCount() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.flakyMaxCount).isEqualTo(10);
+	}
+
+	@Test
+	public void isRealJsonReportPathSetIfFlakyRerunAndJsonArgumentsWasPassedTogether() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
+		arguments.add("--plugin");
+		arguments.add("json:report.json");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).endsWith("report.json");
+		assertThat(runtimeConfiguration.jsonReportPath.toString()).doesNotContain("parallelCukesTmp");
+		assertThat(runtimeConfiguration.jsonReportPath.endsWith(".json"));
+	}
+
+
+	@Test
+	public void isRealRerunReportPathSetIfFlakyRerunAndJsonArgumentsWasPassedTogether()	throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
 		arguments.add("--plugin");
 		arguments.add("rerun:" + REPORT_RERUNREPORT);
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
 		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
-		assertThat(runtimeConfiguration.jsonReportRequired).isTrue();
-		assertThat(runtimeConfiguration.jsonReportPath.endsWith(".json"));
+		assertThat(runtimeConfiguration.rerunReportReportPath.toString()).endsWith(REPORT_RERUNREPORT);
+		assertThat(runtimeConfiguration.rerunReportReportPath.toString()).doesNotContain("parallelCukesTmp");
+	}
+
+	@Test
+	public void flakyRerunAttemptsCountParsedCorrectlyFlakyPathSetIfOnlyFlakyRerunArgumentWasPassed() throws
+			IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-attemptsCount");
+		arguments.add("3");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.flakyAttemptsCount).isEqualTo(3);
+	}
+
+	@Test
+	public void flakyRerunReportDirParsedCorrectlyIfFlakyRerunArgumentWasPassed() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-reportDir");
+		arguments.add(REPORT_FLAKY);
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.flakyReportPath.toString()).isEqualTo(REPORT_FLAKY);
+	}
+
+	@Test
+	public void flakyMaxCountParsedCorrectlyIfFlakyRerunArgumentsWasPassed() throws IOException {
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("--flaky-rerun-threshold");
+		arguments.add("5");
+		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
+		RuntimeConfiguration runtimeConfiguration = argumentsParser.parse();
+		assertThat(runtimeConfiguration.flakyMaxCount).isEqualTo(5);
 	}
 	
 	@Test

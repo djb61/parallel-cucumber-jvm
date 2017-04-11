@@ -17,14 +17,14 @@ public class RuntimeConfiguration {
 	public final boolean jsonReportRequired;
 	public final boolean threadTimelineReportRequired;
 	public final boolean rerunReportRequired;
-	public final int rerunAttemptsCount;
+	public final int flakyAttemptsCount;
 	public final Path flakyReportPath;
 	public final int flakyMaxCount;
 
 	public RuntimeConfiguration(int numberOfThreads, List<String> cucumberPassThroughArguments,
 			List<String> featureParsingArguments, List<String> featurePaths, Path htmlReportPath, boolean htmlReportRequired,
 			Path jsonReportPath, boolean jsonReportRequired, Path threadTimelineReportPath,
-			boolean threadTimelineReportRequired, Path rerunReportReportPath, boolean rerunReportRequired, int rerunAttemptsCount
+			boolean threadTimelineReportRequired, Path rerunReportReportPath, boolean rerunReportRequired, int flakyAttemptsCount
 			,Path flakyReportPath, int flakyMaxCount) {
 		this.numberOfThreads = numberOfThreads;
 		this.cucumberPassthroughArguments = cucumberPassThroughArguments;
@@ -38,7 +38,7 @@ public class RuntimeConfiguration {
 		this.threadTimelineReportRequired = threadTimelineReportRequired;
 		this.rerunReportReportPath = rerunReportReportPath;
 		this.rerunReportRequired = rerunReportRequired;
-		this.rerunAttemptsCount = rerunAttemptsCount;
+		this.flakyAttemptsCount = flakyAttemptsCount;
 		this.flakyReportPath = flakyReportPath;
 		this.flakyMaxCount = flakyMaxCount;
 	}
