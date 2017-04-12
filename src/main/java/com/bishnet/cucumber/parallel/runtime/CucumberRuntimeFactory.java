@@ -20,6 +20,8 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 
 public class CucumberRuntimeFactory {
 
+	private static final String RERUN_PREFIX = "@";
+
 	private RuntimeConfiguration runtimeConfiguration;
 	private CucumberBackendFactory cucumberBackendFactory;
 	private ClassLoader cucumberClassLoader;
@@ -30,12 +32,12 @@ public class CucumberRuntimeFactory {
 	}
 
 	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory,
-								  ClassLoader cucumberClassLoader) {
+			ClassLoader cucumberClassLoader) {
 		this(runtimeConfiguration, cucumberBackendFactory, cucumberClassLoader, null);
 	}
 
 	public CucumberRuntimeFactory(RuntimeConfiguration runtimeConfiguration, CucumberBackendFactory cucumberBackendFactory,
-								  ClassLoader cucumberClassLoader, ThreadExecutionRecorder threadExecutionRecorder) {
+			ClassLoader cucumberClassLoader, ThreadExecutionRecorder threadExecutionRecorder) {
 		this.runtimeConfiguration = runtimeConfiguration;
 		this.cucumberBackendFactory = cucumberBackendFactory;
 		this.cucumberClassLoader = cucumberClassLoader;
@@ -98,9 +100,18 @@ public class CucumberRuntimeFactory {
 	private List<Path> getFileSystemFeaturePaths() {
 		List<Path> fileSystemFeaturePaths = new ArrayList<Path>();
 		for (String featurePath : runtimeConfiguration.featurePaths) {
+
+			if (featurePath.startsWith(RERUN_PREFIX))
+				featurePath = removeFirstChar(featurePath);
+
 			if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME))
 				fileSystemFeaturePaths.add(Paths.get(featurePath));
 		}
 		return fileSystemFeaturePaths;
+	}
+
+	private String removeFirstChar(String featurePath) {
+		featurePath = featurePath.substring(1);
+		return featurePath;
 	}
 }

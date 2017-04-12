@@ -2,14 +2,16 @@ package com.bishnet.cucumber.parallel.runtime;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import com.bishnet.cucumber.parallel.cli.ArgumentsParser;
 import com.bishnet.cucumber.parallel.report.HtmlReportMerger;
 import com.bishnet.cucumber.parallel.report.JsonReportMerger;
+import com.bishnet.cucumber.parallel.report.RerunReportMerger;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionRecorder;
 import com.bishnet.cucumber.parallel.report.thread.ThreadExecutionReporter;
-
+import com.bishnet.cucumber.parallel.util.RerunUtils;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
 
@@ -18,6 +20,7 @@ public class ParallelRuntime {
 	private RuntimeConfiguration runtimeConfiguration;
 	private ClassLoader cucumberClassLoader;
 	private CucumberBackendFactory cucumberBackendFactory;
+	private int triedRerun;
 
 	public ParallelRuntime(List<String> arguments) {
 		this(arguments, Thread.currentThread().getContextClassLoader());
@@ -35,7 +38,12 @@ public class ParallelRuntime {
 		this.cucumberClassLoader = cucumberClassLoader;
 		this.cucumberBackendFactory = cucumberBackendFactory;
 		ArgumentsParser argumentsParser = new ArgumentsParser(arguments);
-		runtimeConfiguration = argumentsParser.parse();
+		try {
+			runtimeConfiguration = argumentsParser.parse();
+		}
+		catch (IOException e) {
+			throw new CucumberException(e);
+		}
 	}
 
 	public byte run() {
@@ -43,11 +51,47 @@ public class ParallelRuntime {
 		if (features.isEmpty())
 			return 0;
 		try {
-			List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
-			return runFeatures(rerunFiles);
+			return runWithRerunFailed(features);
 		} catch (InterruptedException | IOException e) {
 			throw new CucumberException(e);
 		}
+	}
+
+	private byte runWithRerunFailed(List<CucumberFeature> features) throws IOException, InterruptedException {
+		List<Path> rerunFiles = splitFeaturesIntoRerunFiles(features);
+		if (rerunFiles.isEmpty()) {
+			System.out.println(
+					String.format("None of the features or scenarios at %s matched the filters, or no scenarios found.",
+							runtimeConfiguration.featurePaths));
+			return 0;
+		}
+		byte result = runFeatures(rerunFiles);
+		if (result != 0 && runtimeConfiguration.flakyAttemptsCount > 0) {
+			result = rerunFlakyTests(rerunFiles, result);
+		}
+		return result;
+	}
+
+	private byte rerunFlakyTests(List<Path> rerunFiles, byte result) throws IOException, InterruptedException {
+		int failedCount = RerunUtils.countScenariosInRerunFile(runtimeConfiguration.rerunReportReportPath);
+		if (failedCount > runtimeConfiguration.flakyMaxCount) {
+			System.out.println(
+					String.format("%d TESTS FAILED - MORE THEN ALLOWED FOR RERUN (%d)! Aborting rerun flaky.",
+							failedCount, runtimeConfiguration.flakyMaxCount));
+			return result;
+		}
+		System.out.println(String.format(
+				"RERUN FLAKY TESTS STARTED. WILL TRY FOR %d ATTEMPT(S).", runtimeConfiguration.flakyAttemptsCount));
+		triedRerun = 1;
+		while (result != 0 && triedRerun <= runtimeConfiguration.flakyAttemptsCount) {
+			rerunFiles.clear();
+			rerunFiles.add(runtimeConfiguration.rerunReportReportPath);
+			result = runFeatures(rerunFiles);
+			System.out.println(String.format("RERUN FLAKY TESTS ATTEMPT #%d FINISHED.", triedRerun++));
+		}
+		System.out.println(String.format(
+				"RERUN FLAKY TESTS FINISHED. TRIED FOR %d ATTEMPT(S).", triedRerun));
+		return result;
 	}
 
 	private List<CucumberFeature> parseFeatures() {
@@ -74,20 +118,32 @@ public class ParallelRuntime {
 
 		byte result = executor.run();
 
-		if (runtimeConfiguration.jsonReportRequired) {
-			JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
-			merger.merge(runtimeConfiguration.jsonReportPath);
-		}
-		if (runtimeConfiguration.htmlReportRequired) {
-			HtmlReportMerger merger = new HtmlReportMerger(executor.getHtmlReports());
-			merger.merge(runtimeConfiguration.htmlReportPath);
-		}
-		if (runtimeConfiguration.threadTimelineReportRequired) {
+        if (triedRerun == 0) {
+            if (runtimeConfiguration.rerunReportRequired) {
+                RerunReportMerger merger = new RerunReportMerger(executor.getRerunReports());
+                merger.merge(runtimeConfiguration.rerunReportReportPath);
+            }
+            if (runtimeConfiguration.jsonReportRequired) {
+                JsonReportMerger merger = new JsonReportMerger(executor.getJsonReports());
+                merger.merge(runtimeConfiguration.jsonReportPath);
+            }
+            if (runtimeConfiguration.htmlReportRequired) {
+                HtmlReportMerger merger = new HtmlReportMerger(executor.getHtmlReports());
+                merger.merge(runtimeConfiguration.htmlReportPath);
+            }
+        } else {
+            RerunReportMerger merger = new RerunReportMerger(executor.getRerunReports());
+            merger.merge(runtimeConfiguration.rerunReportReportPath);
+            JsonReportMerger jsonMerger = new JsonReportMerger(executor.getJsonReports());
+            jsonMerger.mergeRerunFailedReports(runtimeConfiguration.jsonReportPath,
+                    Paths.get(runtimeConfiguration.flakyReportPath.toString(), "flaky_" + triedRerun + ".json"));
+        }
+        if (runtimeConfiguration.threadTimelineReportRequired) {
 			ThreadExecutionReporter threadExecutionReporter = new ThreadExecutionReporter();
 			threadExecutionReporter.writeReport(threadExecutionRecorder.getRecordedData(), runtimeConfiguration.threadTimelineReportPath);
 		}
-		
-		
+
+
 		return result;
 	}
 }

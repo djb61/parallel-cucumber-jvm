@@ -32,7 +32,7 @@ public class ThreadExecutionReporterTest {
 
 	@After
 	public void teardown() throws IOException {
-		deleteDirectory(reportDirectory.toFile());
+		//deleteDirectory(reportDirectory.toFile());
 	}
 
 	@Test

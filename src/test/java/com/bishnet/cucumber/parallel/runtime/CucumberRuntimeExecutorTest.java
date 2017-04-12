@@ -20,7 +20,7 @@ public class CucumberRuntimeExecutorTest {
 		boolean[] shouldThrowExceptions = new boolean[] { false, false };
 		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
 		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, getRerunFiles(),
-				getRuntimeConfiguration(false, false));
+				getRuntimeConfiguration(false, false, false));
 		assertThat(runtimeExecutor.run()).isEqualTo((byte) 0);
 	}
 
@@ -30,7 +30,7 @@ public class CucumberRuntimeExecutorTest {
 		boolean[] shouldThrowExceptions = new boolean[] { false, false };
 		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
 		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, getRerunFiles(),
-				getRuntimeConfiguration(false, false));
+				getRuntimeConfiguration(false, false, false));
 		assertThat(runtimeExecutor.run()).isEqualTo((byte) 1);
 	}
 
@@ -40,7 +40,7 @@ public class CucumberRuntimeExecutorTest {
 		boolean[] shouldThrowExceptions = new boolean[] { false, false };
 		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
 		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, getRerunFiles(),
-				getRuntimeConfiguration(false, false));
+				getRuntimeConfiguration(false, false, false));
 		assertThat(runtimeExecutor.run()).isEqualTo((byte) 1);
 	}
 
@@ -50,7 +50,7 @@ public class CucumberRuntimeExecutorTest {
 		boolean[] shouldThrowExceptions = new boolean[] { false, true };
 		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
 		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, getRerunFiles(),
-				getRuntimeConfiguration(false, false));
+				getRuntimeConfiguration(false, false, false));
 		assertThat(runtimeExecutor.run()).isEqualTo((byte) 0);
 	}
 
@@ -61,7 +61,7 @@ public class CucumberRuntimeExecutorTest {
 		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
 		List<Path> rerunFiles = getRerunFiles();
 		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, rerunFiles,
-				getRuntimeConfiguration(false, true));
+				getRuntimeConfiguration(false, true, false));
 		runtimeExecutor.run();
 		assertThat(runtimeExecutor.getHtmlReports().size()).isEqualTo(rerunFiles.size());
 	}
@@ -73,7 +73,19 @@ public class CucumberRuntimeExecutorTest {
 		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
 		List<Path> rerunFiles = getRerunFiles();
 		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, rerunFiles,
-				getRuntimeConfiguration(true, false));
+				getRuntimeConfiguration(false, false, true));
+		runtimeExecutor.run();
+		assertThat(runtimeExecutor.getRerunReports().size()).isEqualTo(rerunFiles.size());
+	}
+
+	@Test
+	public void shouldReturnANumberOfRerunReportsEqualToTheNumberOfRerunFiles() throws InterruptedException, IOException {
+		byte[] exitCodes = new byte[] { 0, 0 };
+		boolean[] shouldThrowExceptions = new boolean[] { false, false };
+		FakeCucumberRuntimeFactory runtimeFactory = new FakeCucumberRuntimeFactory(exitCodes, shouldThrowExceptions);
+		List<Path> rerunFiles = getRerunFiles();
+		CucumberRuntimeExecutor runtimeExecutor = new CucumberRuntimeExecutor(runtimeFactory, rerunFiles,
+				getRuntimeConfiguration(true, false, false));
 		runtimeExecutor.run();
 		assertThat(runtimeExecutor.getJsonReports().size()).isEqualTo(rerunFiles.size());
 	}
@@ -85,7 +97,8 @@ public class CucumberRuntimeExecutorTest {
 		return rerunFiles;
 	}
 
-	private RuntimeConfiguration getRuntimeConfiguration(boolean jsonReportRequired, boolean htmlReportRequired) {
-		return new RuntimeConfiguration(0, null, null, null, null, htmlReportRequired, null, jsonReportRequired, null, false);
+	private RuntimeConfiguration getRuntimeConfiguration(boolean jsonReportRequired, boolean htmlReportRequired, boolean rerunReportRequired) {
+		return new RuntimeConfiguration(0, null, null, null, null, htmlReportRequired, null,
+				jsonReportRequired, null, false, null, rerunReportRequired, 0, null, 0);
 	}
 }

@@ -21,6 +21,7 @@ public class CucumberRuntimeExecutor {
 	private RuntimeConfiguration runtimeConfiguration;
 	private List<Path> htmlReports = new ArrayList<Path>();
 	private List<Path> jsonReports = new ArrayList<Path>();
+	private List<Path> rerunReports = new ArrayList<Path>();
 
 	public CucumberRuntimeExecutor(CucumberRuntimeFactory runtimeFactory, List<Path> rerunFiles,
 			RuntimeConfiguration runtimeConfiguration) {
@@ -35,6 +36,10 @@ public class CucumberRuntimeExecutor {
 
 	public List<Path> getJsonReports() {
 		return jsonReports;
+	}
+
+	public List<Path> getRerunReports() {
+		return rerunReports;
 	}
 
 	public byte run() throws InterruptedException, IOException {
@@ -63,21 +68,43 @@ public class CucumberRuntimeExecutor {
 
 	private List<String> buildCallableRuntimeArgs(Path rerunFile) throws IOException {
 		List<String> callableRuntimeArgs = new ArrayList<String>();
+
+		if (runtimeConfiguration.rerunReportRequired){
+			addRerunReportArgs(callableRuntimeArgs);
+		}
 		if (runtimeConfiguration.jsonReportRequired) {
-			Path jsonReport = Files.createTempFile("parallelCukes", ".json");
-			jsonReport.toFile().deleteOnExit();
-			jsonReports.add(jsonReport);
-			callableRuntimeArgs.add("--plugin");
-			callableRuntimeArgs.add("json:" + jsonReport);
+			addJsonReportArgs(callableRuntimeArgs);
 		}
 		if (runtimeConfiguration.htmlReportRequired) {
-			Path htmlReport = Files.createTempDirectory("parallelCukes");
-			Runtime.getRuntime().addShutdownHook(new Thread(new RemoveDirectoryRunnable(htmlReport)));
-			htmlReports.add(htmlReport);
-			callableRuntimeArgs.add("--plugin");
-			callableRuntimeArgs.add("html:" + htmlReport);
+			addHtmlReportArgs(callableRuntimeArgs);
 		}
+
 		callableRuntimeArgs.add("@" + rerunFile);
+
 		return callableRuntimeArgs;
+	}
+
+	private void addRerunReportArgs(List<String> callableRuntimeArgs ) throws IOException {
+		Path rerunReport = Files.createTempFile("parallelCukes", ".rerun");
+		rerunReport.toFile().deleteOnExit();
+		rerunReports.add(rerunReport);
+		callableRuntimeArgs.add("--plugin");
+		callableRuntimeArgs.add("rerun:" + rerunReport);
+	}
+
+	private void addJsonReportArgs(List<String> callableRuntimeArgs ) throws IOException {
+		Path jsonReport = Files.createTempFile("parallelCukes", ".json");
+		jsonReport.toFile().deleteOnExit();
+		jsonReports.add(jsonReport);
+		callableRuntimeArgs.add("--plugin");
+		callableRuntimeArgs.add("json:" + jsonReport);
+	}
+
+	private void addHtmlReportArgs(List<String> callableRuntimeArgs ) throws IOException {
+		Path htmlReport = Files.createTempDirectory("parallelCukes");
+		Runtime.getRuntime().addShutdownHook(new Thread(new RemoveDirectoryRunnable(htmlReport)));
+		htmlReports.add(htmlReport);
+		callableRuntimeArgs.add("--plugin");
+		callableRuntimeArgs.add("html:" + htmlReport);
 	}
 }
