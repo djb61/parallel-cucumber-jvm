@@ -11,14 +11,14 @@ public class ThreadTimelineData {
 	@SerializedName("group")
 	private long threadId;
 	@SerializedName("content")
-	private String scenarioId;
+	private String scenario;
 	@SerializedName("featurePath")
 	private String featurePath;
 
-	public ThreadTimelineData(long startTime, long threadId, String scenarioId) {
+	public ThreadTimelineData(long startTime, long threadId, String scenario) {
 		this.startTime = startTime;
 		this.threadId = threadId;
-		this.scenarioId = scenarioId;
+		this.scenario = scenario;
 	}
 
 	public void setEndTime(long endTime) {
@@ -45,7 +45,7 @@ public class ThreadTimelineData {
 		return threadId;
 	}
 
-	public String getScenarioId() {
-		return scenarioId;
+	public String getScenario() {
+		return scenario;
 	}
 }

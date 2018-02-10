@@ -55,7 +55,7 @@ public class ThreadLoggedRuntime extends Runtime {
 
 	private void createTimelineData(Scenario gherkinScenario) {
 		threadTimelineData = new ThreadTimelineData(System.currentTimeMillis(), Thread.currentThread().getId(),
-				gherkinScenario.getId());
+				gherkinScenario.getName());
 	}
 	
 	private void addFeaturePathToTimelineData(String featurePath) {

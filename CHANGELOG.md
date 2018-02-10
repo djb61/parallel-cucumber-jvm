@@ -1,6 +1,10 @@
 ChangeLog
 =====================
 
+0.1.5 (2018-02-10)
+=====================
+* Update thread report to use Scenario Name
+
 0.1.4 (2016-11-06)
 =====================
 * Switch to requiring Java 8.

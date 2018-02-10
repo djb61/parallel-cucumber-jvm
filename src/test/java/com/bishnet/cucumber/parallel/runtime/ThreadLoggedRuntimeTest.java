@@ -30,7 +30,8 @@ public class ThreadLoggedRuntimeTest {
 
 	private static final String FEATURE_PATH = "featurePath";
 	private static final String SCENARIO_ID = "scenarioId";
-	public static final String GIVEN = "given";
+	private static final String SCENARIO_NAME = "scenarioName";
+	private static final String GIVEN = "given";
 
 	@Mock
 	private ResourceLoader resourceLoader;
@@ -69,6 +70,7 @@ public class ThreadLoggedRuntimeTest {
 
 		when(i18n.keywords(GIVEN)).thenReturn(Arrays.asList(GIVEN));
 		when(scenario.getId()).thenReturn(SCENARIO_ID);
+		when(scenario.getName()).thenReturn(SCENARIO_NAME);
 
 		List<Backend> backends = Arrays.asList(backend);
 		threadLoggedRuntime = new ThreadLoggedRuntime(resourceLoader, classLoader, backends, runtimeOptions, threadExecutionRecorder);
@@ -88,7 +90,7 @@ public class ThreadLoggedRuntimeTest {
 
 		assertThat(recordedData.getFeaturePath()).isEqualTo(FEATURE_PATH);
 		assertThat(recordedData.getThreadId()).isEqualTo(Thread.currentThread().getId());
-		assertThat(recordedData.getScenarioId()).isEqualTo(SCENARIO_ID);
+		assertThat(recordedData.getScenario()).isEqualTo(SCENARIO_NAME);
 		assertThat(recordedData.getStartTime()).isNotNull();
 		assertThat(recordedData.getEndTime()).isNotNull();
 
